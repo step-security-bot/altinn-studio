@@ -1,5 +1,7 @@
 import React from 'react';
 import { CheckboxGroup } from '@altinn/altinn-design-system';
+import type { FormComponentType } from '../types/global';
+import { TextFieldPreview } from './TextFieldPreview';
 
 // TODO: import thids from lanugage file in ux-editor
 export enum ComponentTypes {
@@ -24,9 +26,14 @@ export enum ComponentTypes {
 }
 
 export interface IPreviewComponentWrapperProps {
-  type: ComponentTypes;
-  legend: string;
-  options?: any[];
+  component: FormComponentType;
+  label: string;
+}
+
+interface ICheckboxItem {
+  checked: boolean;
+  label: string;
+  name: string;
 }
 
 const checkBoxitems: any = [
@@ -35,13 +42,21 @@ const checkBoxitems: any = [
   { checked: false, label: 'Jorden', name: 'planet3' },
 ];
 
-export const PreviewComponentWrapper = ({
-  legend,
-  options,
-  type,
-}: IPreviewComponentWrapperProps) => {
-  if (type == ComponentTypes.Checkboxes) {
-    return <CheckboxGroup items={options ? options : checkBoxitems} legend={legend} />;
+export const PreviewComponentWrapper = ({ label, component }: IPreviewComponentWrapperProps) => {
+  if (component.type == ComponentTypes.Checkboxes) {
+    const myOptions: Array<ICheckboxItem> = [];
+    component.options.forEach((option) => {
+      myOptions.push({
+        checked: false,
+        label: option.label,
+        name: option.value,
+      } as unknown as ICheckboxItem);
+    });
+    return (
+      <CheckboxGroup items={myOptions.length !== 0 ? myOptions : checkBoxitems} legend={label} />
+    );
+  } else if (component.type == ComponentTypes.Input) {
+    return <TextFieldPreview label={label} />;
   } else {
     return <span>To be implemented</span>;
   }

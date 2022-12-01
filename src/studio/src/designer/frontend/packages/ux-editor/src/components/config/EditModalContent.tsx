@@ -50,10 +50,7 @@ export const EditModalContent = ({
 
   return (
     <FieldSet className={classes.fieldset}>
-      <EditComponentId
-        component={component}
-        handleComponentUpdate={handleComponentUpdate}
-      />
+      <EditComponentId component={component} handleComponentUpdate={handleComponentUpdate} />
       {renderFromComponentSpecificDefinition(getConfigDefinitionForComponent())}
       <ComponentSpecificContent
         component={component}

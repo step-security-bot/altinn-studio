@@ -326,8 +326,8 @@ export function EditContainer(props: IEditContainerProvidedProps) {
                 ) : (
                   <div className={`${classes.textPrimaryDark} ${classes.formComponentTitle}`}>
                     <PreviewComponentWrapper
-                      type={component.type}
-                      legend={
+                      component={component}
+                      label={
                         component.textResourceBindings?.title
                           ? truncate(
                               getTextResource(component.textResourceBindings.title, textResources),
