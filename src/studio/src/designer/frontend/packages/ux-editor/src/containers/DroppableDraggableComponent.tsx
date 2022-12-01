@@ -1,4 +1,4 @@
-import type { ReactNode, RefObject } from 'react';
+import type { ReactNode, RefObject } from "react";
 import React, { memo, useRef } from 'react';
 import type { DropTargetHookSpec, DropTargetMonitor } from 'react-dnd';
 import { useDrag, useDrop } from 'react-dnd';
@@ -10,13 +10,18 @@ import {
 } from './helpers/dnd-helpers';
 import type { EditorDndEvents, EditorDndItem } from './helpers/dnd-types';
 import { ItemType } from './helpers/dnd-types';
+import styles from './DroppableDraggableComponent.module.css';
 
 export const dropTargetSpec = (
   targetItem: EditorDndItem,
   events: EditorDndEvents,
-  ref: RefObject<HTMLDivElement>
+  dragRef: RefObject<HTMLDivElement>,
+  previewRef: RefObject<HTMLDivElement>
 ): DropTargetHookSpec<any, any, any> => ({
   accept: Object.values(ItemType),
+  collect(monitor) {
+    return { canDrop: monitor.canDrop() };
+  },
   canDrop(draggedItem: EditorDndItem, monitor: DropTargetMonitor) {
     return monitor.isOver({ shallow: true });
   },
@@ -28,16 +33,15 @@ export const dropTargetSpec = (
       return;
     }
     if (
-      !hoverIndexHelper(
+      hoverIndexHelper(
         draggedItem,
         targetItem,
-        ref.current?.getBoundingClientRect(),
+        previewRef?.current?.getBoundingClientRect(),
         monitor.getClientOffset()
       )
     ) {
-      return;
+      events.moveItem(draggedItem, targetItem);
     }
-    events.moveItem(draggedItem, targetItem);
   },
 });
 
@@ -58,19 +62,30 @@ export const DroppableDraggableComponent = memo(function DroppableDraggableCompo
   id,
   index,
 }: IDroppableDraggableComponentProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  const dragRef = useRef<HTMLDivElement>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
 
   const item = { id, containerId, index, type: ItemType.Item };
   const [{ isDragging }, drag] = useDrag(dragSourceSpec(item, canDrag, dndEvents.onDropItem));
 
-  const [, drop] = useDrop(dropTargetSpec(item, dndEvents, ref));
-  const opacity = isDragging ? 0 : 1;
+  const [{ isDroppable }, drop] = useDrop(dropTargetSpec(item, dndEvents, dragRef, previewRef));
+  const opacity = isDragging && !isDroppable ? 0.5 : 1;
   const background = isDragging ? 'inherit !important' : undefined;
 
-  drag(drop(ref));
+  drag(drop(isDragging ? previewRef : dragRef));
   return (
-    <div style={{ opacity, background }} ref={ref}>
-      {children}
+    <div className={styles.root} style={{ opacity, background }} ref={previewRef}>
+      <div className={styles.handle} ref={dragRef}>
+        <div className={styles.points}>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+        </div>
+      </div>
+      <div className={styles.content}>{children}</div>
     </div>
   );
 });

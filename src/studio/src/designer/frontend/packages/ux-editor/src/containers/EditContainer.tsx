@@ -11,6 +11,7 @@ import { FormLayoutActions } from '../features/formDesigner/formLayout/formLayou
 import { getLanguageFromKey } from 'app-shared/utils/language';
 import type { FormComponentType, IAppState, IFormComponent } from '../types/global';
 import { PreviewComponentWrapper } from './PreviewComponentWrapper';
+import { Button, ButtonColor, ButtonVariant } from '@altinn/altinn-design-system';
 
 const useStyles = makeStyles({
   active: {
@@ -347,28 +348,28 @@ export function EditContainer(props: IEditContainerProvidedProps) {
               <Grid container={true} direction='row' className={btnGrid()}>
                 <Grid item={true} xs={12}>
                   {(activeListIndex === 0 || activeList.length < 1) && (
-                    <IconButton
-                      type='button'
-                      className={`${classes.formComponentsBtn} ${classes.specialBtn}`}
+                    <Button
+                      className={classes.formComponentsBtn}
+                      color={ButtonColor.Danger}
+                      iconName={'Delete'}
                       onClick={handleComponentDelete}
                       tabIndex={0}
-                    >
-                      <i className='fa fa-circletrash' />
-                    </IconButton>
+                      variant={ButtonVariant.Quiet}
+                    />
                   )}
                 </Grid>
                 <Grid item={true} xs={12}>
                   {(activeList.length < 1 ||
                     (activeList.length === 1 && activeListIndex === 0)) && (
-                    <IconButton
-                      data-testid='EditContainer-edit-button'
-                      type='button'
+                    <Button
                       className={classes.formComponentsBtn}
+                      color={ButtonColor.Secondary}
+                      data-testid='EditContainer-edit-button'
+                      iconName={'Edit'}
                       onClick={handleOpenEdit}
                       tabIndex={0}
-                    >
-                      <i className='fa fa-edit' />
-                    </IconButton>
+                      variant={ButtonVariant.Quiet}
+                    />
                   )}
                 </Grid>
               </Grid>

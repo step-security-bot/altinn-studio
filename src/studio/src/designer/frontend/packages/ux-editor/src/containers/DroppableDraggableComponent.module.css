@@ -1,0 +1,41 @@
+.root {
+  background-color: white;
+  border-color: #008FD6;
+  border-radius: 5px;
+  border-style: dashed;
+  border-width: 1px 1px 1px 0;
+  box-shadow: 0 0 4px #1EADF7;
+  display: flex;
+  align-items: stretch;
+}
+
+.handle {
+  --point-size: 3px;
+  background-color: #efefef;
+  border-left: 6px solid #008FD6;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: move;
+}
+
+.points {
+  display: grid;
+  grid-template: var(--point-size) / var(--point-size) var(--point-size);
+  gap: var(--point-size);
+  margin: auto;
+}
+
+.point {
+  background: #A5AAB1;
+  width: var(--point-size);
+  height: var(--point-size);
+  border-radius: 50%;
+}
+
+.content {
+  flex: 1;
+}
