@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode, RefObject } from "react";
+import type { ReactNode, RefObject } from "react";
 import React, { memo, useRef } from 'react';
 import type { DropTargetHookSpec, DropTargetMonitor } from 'react-dnd';
 import { useDrag, useDrop } from 'react-dnd';
@@ -10,6 +10,7 @@ import {
 } from './helpers/dnd-helpers';
 import type { EditorDndEvents, EditorDndItem } from './helpers/dnd-types';
 import { ItemType } from './helpers/dnd-types';
+import styles from './DroppableDraggableComponent.module.css';
 
 export const dropTargetSpec = (
   targetItem: EditorDndItem,
@@ -53,23 +54,6 @@ export interface IDroppableDraggableComponentProps {
   index: number;
 }
 
-const handleStyle: CSSProperties = {
-  display: 'inline-block',
-  border: 'blue solid .1rem',
-  borderRadius: '.3rem',
-  padding: '.2rem',
-  cursor: 'move',
-};
-
-const componentStyle: CSSProperties = {
-  display: 'inline-block',
-};
-
-const cantDropStyle: CSSProperties = {
-  ...handleStyle,
-  cursor: 'not-allowed',
-};
-
 export const DroppableDraggableComponent = memo(function DroppableDraggableComponent({
   canDrag,
   children,
@@ -90,11 +74,18 @@ export const DroppableDraggableComponent = memo(function DroppableDraggableCompo
 
   drag(drop(isDragging ? previewRef : dragRef));
   return (
-    <div style={{ opacity, background }} ref={previewRef}>
-      <div ref={dragRef} style={isDroppable ? handleStyle : cantDropStyle}>
-        |||
+    <div className={styles.root} style={{ opacity, background }} ref={previewRef}>
+      <div className={styles.handle} ref={dragRef}>
+        <div className={styles.points}>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+          <div className={styles.point}/>
+        </div>
       </div>
-      <div style={componentStyle}>{children}</div>
+      <div className={styles.content}>{children}</div>
     </div>
   );
 });
