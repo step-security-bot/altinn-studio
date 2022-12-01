@@ -7,10 +7,10 @@ import { EditModalContent } from '../components/config/EditModalContent';
 import { makeGetLayoutOrderSelector } from '../selectors/getLayoutData';
 import '../styles/index.css';
 import { getComponentTitleByComponentType, getTextResource, truncate } from '../utils/language';
-import { componentIcons } from '../components';
 import { FormLayoutActions } from '../features/formDesigner/formLayout/formLayoutSlice';
 import { getLanguageFromKey } from 'app-shared/utils/language';
 import type { FormComponentType, IAppState, IFormComponent } from '../types/global';
+import { PreviewComponentWrapper } from './PreviewComponentWrapper';
 
 const useStyles = makeStyles({
   active: {
@@ -325,18 +325,18 @@ export function EditContainer(props: IEditContainerProvidedProps) {
                   </Grid>
                 ) : (
                   <div className={`${classes.textPrimaryDark} ${classes.formComponentTitle}`}>
-                    <i
-                      className={`${classes.icon} ${
-                        componentIcons[component.type] || 'fa fa-help-circle'
-                      }`}
+                    <PreviewComponentWrapper
+                      type={component.type}
+                      legend={
+                        component.textResourceBindings?.title
+                          ? truncate(
+                              getTextResource(component.textResourceBindings.title, textResources),
+                              80
+                            )
+                          : getComponentTitleByComponentType(component.type, language) ||
+                            getLanguageFromKey('ux_editor.component_unknown', language)
+                      }
                     />
-                    {component.textResourceBindings?.title
-                      ? truncate(
-                          getTextResource(component.textResourceBindings.title, textResources),
-                          80
-                        )
-                      : getComponentTitleByComponentType(component.type, language) ||
-                        getLanguageFromKey('ux_editor.component_unknown', language)}
                   </div>
                 )}
               </ListItem>
