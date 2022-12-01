@@ -48,8 +48,8 @@ export const PreviewComponentWrapper = ({ label, component }: IPreviewComponentW
     component.options.forEach((option) => {
       myOptions.push({
         checked: false,
-        label: option.label,
-        name: option.value,
+        label: option.value,
+        name: option.label,
       } as unknown as ICheckboxItem);
     });
     return (
@@ -58,6 +58,6 @@ export const PreviewComponentWrapper = ({ label, component }: IPreviewComponentW
   } else if (component.type == ComponentTypes.Input) {
     return <TextFieldPreview label={label} />;
   } else {
-    return <span>To be implemented</span>;
+    return <span>{label} To be implemented</span>;
   }
 };
