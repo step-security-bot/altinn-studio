@@ -337,6 +337,7 @@ export function EditContainer(props: IEditContainerProvidedProps) {
                           : getComponentTitleByComponentType(component.type, language) ||
                             getLanguageFromKey('ux_editor.component_unknown', language)
                       }
+                      textResources={textResources}
                     />
                   </div>
                 )}

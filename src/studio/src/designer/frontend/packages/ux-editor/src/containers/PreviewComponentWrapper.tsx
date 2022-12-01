@@ -1,7 +1,8 @@
 import React from 'react';
 import { CheckboxGroup } from '@altinn/altinn-design-system';
-import type { FormComponentType } from '../types/global';
+import type { FormComponentType, ITextResource } from '../types/global';
 import { TextFieldPreview } from './TextFieldPreview';
+import { getTextResource } from '../utils/language';
 
 // TODO: import thids from lanugage file in ux-editor
 export enum ComponentTypes {
@@ -28,6 +29,7 @@ export enum ComponentTypes {
 export interface IPreviewComponentWrapperProps {
   component: FormComponentType;
   label: string;
+  textResources: ITextResource[];
 }
 
 interface ICheckboxItem {
@@ -42,14 +44,18 @@ const checkBoxitems: any = [
   { checked: false, label: 'Jorden', name: 'planet3' },
 ];
 
-export const PreviewComponentWrapper = ({ label, component }: IPreviewComponentWrapperProps) => {
+export const PreviewComponentWrapper = ({
+  label,
+  component,
+  textResources,
+}: IPreviewComponentWrapperProps) => {
   if (component.type == ComponentTypes.Checkboxes) {
     const myOptions: Array<ICheckboxItem> = [];
     component.options.forEach((option) => {
       myOptions.push({
         checked: false,
-        label: option.value,
-        name: option.label,
+        label: getTextResource(option.label, textResources),
+        name: option.value,
       } as unknown as ICheckboxItem);
     });
     return (
