@@ -72,7 +72,7 @@ export const DroppableDraggableComponent = memo(function DroppableDraggableCompo
   const opacity = isDragging && !isDroppable ? 0.5 : 1;
   const background = isDragging ? 'inherit !important' : undefined;
 
-  drag(drop(isDragging ? previewRef : dragRef));
+  drag(drop(previewRef));
   return (
     <div className={styles.root} style={{ opacity, background }} ref={previewRef}>
       <div className={styles.handle} ref={dragRef}>

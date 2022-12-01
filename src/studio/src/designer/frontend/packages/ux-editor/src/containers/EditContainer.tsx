@@ -16,7 +16,6 @@ import { Button, ButtonColor, ButtonVariant } from '@altinn/altinn-design-system
 const useStyles = makeStyles({
   active: {
     backgroundColor: '#fff',
-    boxShadow: '0rem 0rem 0.4rem rgba(0, 0, 0, 0.25)',
     padding: '0.45rem 1.05rem 1.05rem 1.05rem',
     marginBottom: '1.2rem',
     border: '0.15rem solid #fff',
@@ -31,13 +30,10 @@ const useStyles = makeStyles({
     fontSize: '1.2rem',
   },
   formComponent: {
-    backgroundColor: altinnTheme.altinnPalette.primary.greyLight,
-    border: `0.15rem dotted ${altinnTheme.altinnPalette.primary.grey}`,
     color: `${altinnTheme.altinnPalette.primary.blueDarker}!important`,
     padding: '0.45rem 1.05rem 1.05rem 1.05rem',
     '&:hover': {
       backgroundColor: '#fff',
-      boxShadow: '0rem 0rem 0.4rem rgba(0, 0, 0, 0.25)',
     },
   },
   formComponentsBtn: {

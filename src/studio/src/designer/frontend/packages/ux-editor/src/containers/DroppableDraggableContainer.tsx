@@ -2,7 +2,6 @@ import type { ReactNode, RefObject } from 'react';
 import React, { memo, useRef } from 'react';
 import type { DropTargetHookSpec, DropTargetMonitor } from 'react-dnd';
 import { useDrag, useDrop } from 'react-dnd';
-import altinnTheme from 'app-shared/theme/altinnStudioTheme';
 import {
   dragSourceSpec,
   getContainerPosition,
@@ -93,11 +92,10 @@ export const DroppableDraggableContainer = memo(function DroppableDraggableConta
     type: ItemType.Container,
   };
   const [{ isDragging }, drag] = useDrag(dragSourceSpec(item, canDrag, dndEvents.onDropItem));
-  const [{ isOver }, drop] = useDrop(dropTargetSpec(item, dndEvents, ref));
+  const [, drop] = useDrop(dropTargetSpec(item, dndEvents, ref));
   const opacity = isDragging ? 0 : 1;
-  const backgroundColor = isOver ? 'white' : altinnTheme.altinnPalette.primary.greyLight;
   const style = {
-    backgroundColor,
+    backgroundColor: 'white',
     paddingLeft: '1.2rem',
     paddingRight: '1.2rem',
     border: isBaseContainer ? '1px solid #ccc' : '',
