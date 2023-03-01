@@ -1,0 +1,52 @@
+{
+  "title": {
+    "en": "ACN 1",
+    "nb": "ACN 1",
+    "nn": "ACN 1"
+  },
+  "sector": [
+    "privat"
+  ],
+  "status": "Active",
+  "validTo": "2022-12-24T23:59:59",
+  "homepage": "https://www.nav.no/",
+  "isPartOf": "navportal",
+  "keywords": [
+    {
+      "word": "delegation",
+      "language": "nb"
+    }
+  ],
+  "validFrom": "2022-09-20T06:46:07.598Z",
+  "identifier": "acn_1",
+  "isComplete": true,
+  "description": {
+    "en": "Testdepartment service 1",
+    "nb": "Acn service 1",
+    "nn": "Acn service 1"
+  },
+  "resourceType": "MaskinportenSchema",
+  "thematicArea": "http://publications.europa.eu/resource/authority/eurovoc/2468",
+  "isPublicService": true,
+  "rightDescription": {
+    "en": "Gir mottaker lov til å bruke api",
+    "nb": "Gir mottaker lov til å bruke api",
+    "nn": "Gir mottaker lov til å bruke api"
+  },
+  "resourceReferences": [
+    {
+      "reference": "urn:altinn:resourceregistry:nav_aa",
+      "referenceType": "Uri",
+      "referenceSource": "Altinn3"
+    }
+  ],
+  "hasCompetentAuthority": {
+    "name": {
+      "en": "Accenture Norway",
+      "nb": "Accenture Norge",
+      "nn": "Accenture Norge"
+    },
+    "orgcode": "ACN",
+    "organization": "991825827"
+  }
+}
