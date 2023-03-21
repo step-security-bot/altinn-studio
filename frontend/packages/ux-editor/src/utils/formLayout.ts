@@ -25,10 +25,10 @@ import { layoutSchemaUrl } from 'app-shared/cdn-paths';
 
 const { addWidget, updateActiveListOrder } = FormLayoutActions;
 
-export function convertFromLayoutToInternalFormat(
-  formLayout: IExternalComponent[],
-  hidden: any
-): IInternalLayout {
+
+
+// ----------------------------------------------------------------------------------------------------
+export function convertFromLayoutToInternalFormat(formLayout: any[], hidden: any): IInternalLayout {
   const convertedLayout: IInternalLayout = {
     containers: {},
     components: {},
@@ -49,26 +49,20 @@ export function convertFromLayoutToInternalFormat(
   const formLayoutCopy: IExternalComponent[] = deepCopy(formLayout);
 
   for (const element of topLevelComponents(formLayoutCopy)) {
-    if (element.type !== ComponentType.Group) {
-      const { id, ...rest } = element;
-      if (!rest.type && rest.component) {
-        rest.type = rest.component;
-        delete rest.component;
-      }
-      rest.itemType = 'COMPONENT';
-      convertedLayout.components[id] = {
-        id,
-        ...rest
-      } as IFormComponent;
-      convertedLayout.order[baseContainerId].push(id);
+    if (element.type.toLowerCase() !== 'group') {
+      const newElement = { ...element, itemType: 'COMPONENT' }
+      convertedLayout.order[baseContainerId].push(newElement.id);
     } else {
       extractChildrenFromGroup(element, formLayoutCopy, convertedLayout);
       convertedLayout.order[baseContainerId].push(element.id);
+
     }
   }
   return convertedLayout;
 }
 
+
+// ----------------------------------------------------------------------------------------------------
 
 /**
  * Takes a layout and removes the components in it that belong to groups. This returns
@@ -379,7 +373,7 @@ export const addNavigationButtons = (layout: IInternalLayout, id: string): IInte
     dataModelBindings: {},
     id,
     itemType: 'COMPONENT',
-    onClickAction: () => {},
+    onClickAction: () => { },
     showBackButton: true,
     textResourceBindings: { next: 'next', back: 'back', },
     type: ComponentType.NavigationButtons,
