@@ -1,3 +1,4 @@
+// import { itemType } from './../../../schema-editor/src/components/TreeView/dnd-helpers';
 import type { Dispatch } from 'redux';
 import type { IComponent } from '../components';
 import { ComponentTypes } from '../components';
@@ -18,10 +19,10 @@ import i18next from 'i18next';
 
 const { addFormComponent, addFormContainer, addWidget, updateActiveListOrder } = FormLayoutActions;
 
-export function convertFromLayoutToInternalFormat(
-  formLayout: any[],
-  hidden: any
-): IInternalLayouts {
+
+
+// ----------------------------------------------------------------------------------------------------
+export function convertFromLayoutToInternalFormat(formLayout: any[], hidden: any): IInternalLayouts {
   const convertedLayout: IInternalLayouts = {
     containers: {},
     components: {},
@@ -43,21 +44,20 @@ export function convertFromLayoutToInternalFormat(
 
   for (const element of topLevelComponents(formLayoutCopy)) {
     if (element.type.toLowerCase() !== 'group') {
-      const { id, ...rest } = element;
-      if (!rest.type) {
-        rest.type = rest.component;
-        delete rest.component;
-      }
-      rest.itemType = 'COMPONENT';
-      convertedLayout.components[id] = rest;
-      convertedLayout.order[baseContainerId].push(id);
+      const newElement = { ...element, itemType: 'COMPONENT' }
+      convertedLayout.components[newElement.id] = newElement;
+      convertedLayout.order[baseContainerId].push(newElement.id);
     } else {
       extractChildrenFromGroup(element, formLayoutCopy, convertedLayout);
       convertedLayout.order[baseContainerId].push(element.id);
+
     }
   }
   return convertedLayout;
 }
+
+
+// ----------------------------------------------------------------------------------------------------
 
 /**
  * Takes a layout and removes the components in it that belong to groups. This returns
