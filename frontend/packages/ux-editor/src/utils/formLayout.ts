@@ -60,14 +60,11 @@ export function convertFromLayoutToInternalFormat(
     } else {
       extractChildrenFromGroup(element, formLayoutCopy, convertedLayout);
       convertedLayout.order[baseContainerId].push(element.id);
-
     }
   }
   return convertedLayout;
 }
 
-
-// ----------------------------------------------------------------------------------------------------
 
 /**
  * Takes a layout and removes the components in it that belong to groups. This returns
