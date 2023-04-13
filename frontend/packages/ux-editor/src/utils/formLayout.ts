@@ -19,10 +19,10 @@ import i18next from 'i18next';
 
 const { addFormComponent, addFormContainer, addWidget, updateActiveListOrder } = FormLayoutActions;
 
-
-
-// ----------------------------------------------------------------------------------------------------
-export function convertFromLayoutToInternalFormat(formLayout: any[], hidden: any): IInternalLayouts {
+export function convertFromLayoutToInternalFormat(
+  formLayout: Record<string, any>[],
+  hidden: any
+): IInternalLayouts {
   const convertedLayout: IInternalLayouts = {
     containers: {},
     components: {},
@@ -44,20 +44,22 @@ export function convertFromLayoutToInternalFormat(formLayout: any[], hidden: any
 
   for (const element of topLevelComponents(formLayoutCopy)) {
     if (element.type.toLowerCase() !== 'group') {
-      const newElement = { ...element, itemType: 'COMPONENT' }
-      convertedLayout.components[newElement.id] = newElement;
-      convertedLayout.order[baseContainerId].push(newElement.id);
+      const { id, ...rest } = element;
+      if (!rest.type) {
+        rest.type = rest.component;
+        delete rest.component;
+      }
+      rest.itemType = 'COMPONENT';
+      convertedLayout.components[id] = rest;
+      convertedLayout.order[baseContainerId].push(id);
     } else {
       extractChildrenFromGroup(element, formLayoutCopy, convertedLayout);
       convertedLayout.order[baseContainerId].push(element.id);
-
     }
   }
   return convertedLayout;
 }
 
-
-// ----------------------------------------------------------------------------------------------------
 
 /**
  * Takes a layout and removes the components in it that belong to groups. This returns
@@ -82,6 +84,7 @@ export function convertInternalToLayoutFormat(internalFormat: IInternalLayouts):
   if (!internalFormat) {
     return formLayout;
   }
+
 
   const { components, containers, order } = JSON.parse(
     JSON.stringify(internalFormat)
