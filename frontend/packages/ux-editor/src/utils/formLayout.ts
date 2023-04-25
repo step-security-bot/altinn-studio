@@ -1,8 +1,9 @@
-// import { itemType } from './../../../schema-editor/src/components/TreeView/dnd-helpers';
 import type { Dispatch } from 'redux';
 import type { IComponent } from '../components';
 import { ComponentType } from '../components';
 import { FormLayoutActions } from '../features/formDesigner/formLayout/formLayoutSlice';
+import { CombinationKind, Keywords } from '../../../schema-model/src/lib/types';
+import { AllRestrictions } from '../../../schema-model/src/lib/restrictions';
 import type {
   IExternalFormLayout,
   IFormButtonComponent,
@@ -25,17 +26,17 @@ import { layoutSchemaUrl } from 'app-shared/cdn-paths';
 
 const { addWidget, updateActiveListOrder } = FormLayoutActions;
 
-
-
-// ----------------------------------------------------------------------------------------------------
-export function convertFromLayoutToInternalFormat(formLayout: any[], hidden: any): IInternalLayout {
+export function convertFromLayoutToInternalFormat(
+  formLayout: IExternalComponent[],
+  hidden: any
+): IInternalLayout {
+  console.log("Form tree: ", JSON.stringify(formLayout, null, 2));
   const convertedLayout: IInternalLayout = {
     containers: {},
     components: {},
     order: {},
     hidden: hidden,
   };
-
   const baseContainerId: string = BASE_CONTAINER_ID;
   convertedLayout.order[baseContainerId] = [];
   convertedLayout.containers[baseContainerId] = {
@@ -49,14 +50,36 @@ export function convertFromLayoutToInternalFormat(formLayout: any[], hidden: any
   const formLayoutCopy: IExternalComponent[] = deepCopy(formLayout);
 
   for (const element of topLevelComponents(formLayoutCopy)) {
-    if (element.type.toLowerCase() !== 'group') {
-      const newElement = { ...element, itemType: 'COMPONENT' }
-      convertedLayout.order[baseContainerId].push(newElement.id);
+    console.log("element: ", element)
+    if (element.type !== ComponentType.Group) {
+      const { id, ...rest } = element;
+      console.log("REST : ", rest);
+
+      if (!rest.type && rest.component) {
+        console.log("###### condition  : ", rest);
+        rest.type = rest.component;
+        delete rest.component;
+      }
+      rest.itemType = 'COMPONENT';
+
+
+
+      convertedLayout.components[id] = {
+        id,
+        ...rest
+      } as IFormComponent;
+
+      console.log("convertedLayout: ", JSON.stringify(convertedLayout, null, 2))
+
+      convertedLayout.order[baseContainerId].push(id);
     } else {
       extractChildrenFromGroup(element, formLayoutCopy, convertedLayout);
       convertedLayout.order[baseContainerId].push(element.id);
     }
   }
+
+  console.log("convertedLayout return: ", JSON.stringify(convertedLayout, null, 2))
+
   return convertedLayout;
 }
 
@@ -115,15 +138,18 @@ export function convertInternalToLayoutFormat(internalFormat: IInternalLayout): 
         id,
         type: components[id].type,
         ...components[id],
+
       });
     } else if (containers[id]) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { itemType, ...restOfGroup } = containers[id];
       formLayout.push({
         id,
+
         type: ComponentType.Group,
         children: order[id],
         ...restOfGroup,
+
       });
       order[id].forEach((componentId: string) => {
         if (components[componentId]) {
@@ -132,6 +158,7 @@ export function convertInternalToLayoutFormat(internalFormat: IInternalLayout): 
             id: componentId,
             type: components[componentId].type,
             ...components[componentId],
+
           });
         } else {
           extractChildrenFromGroupInternal(components, containers, order, formLayout, componentId);
@@ -156,6 +183,7 @@ function extractChildrenFromGroupInternal(
     type: ComponentType.Group,
     children: order[groupId],
     ...restOfGroup,
+
   });
   order[groupId].forEach((childId: string) => {
     if (components[childId]) {
@@ -163,6 +191,7 @@ function extractChildrenFromGroupInternal(
       formLayout.push({
         id: childId,
         ...components[childId],
+
       });
     } else {
       extractChildrenFromGroupInternal(components, containers, order, formLayout, childId);
@@ -175,6 +204,7 @@ export function extractChildrenFromGroup(
   components: IExternalComponent[],
   convertedLayout: IInternalLayout
 ) {
+  console.log("START extractChildrenFromGroup")
   const { id, children, type, ...restOfGroup } = group;
   convertedLayout.containers[id] = {
     ...restOfGroup,
@@ -182,6 +212,7 @@ export function extractChildrenFromGroup(
   };
   convertedLayout.order[id] = children || [];
   children?.forEach((componentId: string) => {
+    console.log("children: ", children)
     const component: IExternalComponent =
       components.find((candidate: IExternalComponent) => candidate.id === componentId);
     if (component.type === 'Group') {
