@@ -1,3 +1,4 @@
+// import { itemType } from './../../../schema-editor/src/components/TreeView/dnd-helpers';
 import type { Dispatch } from 'redux';
 import type { IComponent } from '../components';
 import { ComponentType } from '../components';
