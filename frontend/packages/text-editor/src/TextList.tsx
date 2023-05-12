@@ -17,6 +17,8 @@ export type TextListProps = {
   upsertTextResource: (entry: UpsertTextResourceMutation) => void;
   removeEntry: ({ textId }: TextResourceEntryDeletion) => void;
   updateEntryId: ({ oldId, newId }: TextResourceIdMutation) => void;
+  translateTextResource: (entry: UpsertTextResourceMutation) => void;
+  translationLoading?: boolean;
 };
 export const TextList = ({
   resourceRows,
@@ -35,6 +37,7 @@ export const TextList = ({
             <TableCell key={'header-lang' + language}>{getLangName({ code: language })}</TableCell>
           ))}
           <TableCell>Tekstnøkkel</TableCell>
+          <TableCell></TableCell>
           <TableCell>Variabler</TableCell>
           <TableCell></TableCell>
         </TableRow>

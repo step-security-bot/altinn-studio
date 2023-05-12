@@ -129,5 +129,16 @@ namespace Altinn.Studio.Designer.Services.Interfaces
         /// <param name="keyMutations">A list of the keys that are updated</param>
         /// <returns></returns>
         public Task UpdateRelatedFiles(string org, string app, string developer, List<TextIdMutation> keyMutations);
+
+        /// <summary>
+        /// Translates a text key to a specified language.
+        /// <param name="org">Identifier for the organisation</param>
+        /// <param name="app">Identifier for the application</param>
+        /// <param name="developer">Username of developer</param>
+        /// <param name="languageCode">The language code to translate from</param>
+        /// <param name="key">The text key</param>
+        /// <param name="value">The text value to translate</param>
+        /// </summary>
+        public Task TranslateText(string org, string app, string developer, string languageCode, string key, string value);
     }
 }

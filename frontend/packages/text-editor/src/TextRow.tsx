@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classes from './TextRow.module.css';
 import type { UpsertTextResourceMutation } from './types';
-import { TrashIcon, PencilIcon } from '@navikt/aksel-icons';
+import { GlobeIcon, TrashIcon, PencilIcon } from '@navikt/aksel-icons';
 import {
   Button,
   ButtonSize,
@@ -9,6 +9,7 @@ import {
   ErrorMessage,
   Popover,
   PopoverVariant,
+  Spinner,
   TableCell,
   TableRow,
   TextField,
@@ -28,6 +29,8 @@ export interface TextRowProps {
   textRowEntries: TextTableRowEntry[];
   updateEntryId: (data: TextResourceIdMutation) => void;
   upsertTextResource: (data: UpsertTextResourceMutation) => void;
+  translateTextResource: (data: UpsertTextResourceMutation) => void;
+  translationLoading?: boolean;
   variables: TextResourceVariable[];
   selectedLanguages: string[];
   showButton?: boolean;
@@ -40,6 +43,8 @@ export const TextRow = ({
   removeEntry,
   updateEntryId,
   idExists,
+  translateTextResource,
+  translationLoading,
   variables,
   selectedLanguages,
   showButton = true,
@@ -48,7 +53,14 @@ export const TextRow = ({
   const [textIdEditOpen, setTextIdEditOpen] = useState(false);
   const [keyError, setKeyError] = useState('');
   const [isConfirmDeleteOpen, setIsConfirmDeleteOpen] = useState(false);
+  const [triggeredTranslation, setTriggeredTranslation] = useState(false);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!translationLoading) {
+      setTriggeredTranslation(false);
+    }
+  }, [translationLoading]);
 
   const handleTextIdChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const newTextId = event.currentTarget.value;
@@ -119,6 +131,32 @@ export const TextRow = ({
             />
           )}
         </ButtonContainer>
+      </TableCell>
+      <TableCell>
+        {(!translationLoading || !triggeredTranslation) && (
+          <ButtonContainer>
+            <Button
+              className={classes.deleteButton}
+              aria-label={t('translate')}
+              icon={<GlobeIcon title='Oversett' />}
+              size={ButtonSize.Small}
+              variant={ButtonVariant.Quiet}
+              onClick={() => {
+                setTriggeredTranslation(true);
+                translateTextResource({
+                  language: 'nb',
+                  translation: textRowEntries.find((e) => e.lang === 'nb').translation,
+                  textId,
+                });
+              }}
+            >
+              {'Oversett'}
+            </Button>
+          </ButtonContainer>
+        )}
+        {translationLoading && triggeredTranslation && (
+          <Spinner title='translation loading' variant='interaction' />
+        )}
       </TableCell>
       <TableCell>
         <Variables variables={variables} />

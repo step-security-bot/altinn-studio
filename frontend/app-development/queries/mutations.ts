@@ -11,6 +11,7 @@ import {
   ruleConfigPath,
   textResourceIdsPath,
   textResourcesPath,
+  translateTextResourcePath,
 } from 'app-shared/api-paths';
 import { ITextResourcesObjectFormat } from 'app-shared/types/global';
 
@@ -39,8 +40,15 @@ export const addLanguageCode = (org, app, language, payload) =>
 export const deleteLanguageCode = (org, app, language) =>
   del(textResourcesPath(org, app, language));
 
-export const upsertTextResources = (org: string, app: string, language: string, payload: ITextResourcesObjectFormat) =>
-  put(textResourcesPath(org, app, language), payload);
+export const translateTextResource = (org, app, languageCode, payload) =>
+  put(translateTextResourcePath(org, app, languageCode), payload);
+
+export const upsertTextResources = (
+  org: string,
+  app: string,
+  language: string,
+  payload: ITextResourcesObjectFormat
+) => put(textResourcesPath(org, app, language), payload);
 
 export const saveFormLayout = (org, app, layoutName, payload) =>
   post(formLayoutPath(org, app, layoutName), payload);
@@ -56,14 +64,12 @@ export const updateAppAttachmentMetadata = (org, app, payload) =>
 
 export const updateFormLayoutName = (org, app, oldName, newName) =>
   post(formLayoutNamePath(org, app, oldName), JSON.stringify(newName), {
-    headers: { 'Content-Type': 'application/json' }
+    headers: { 'Content-Type': 'application/json' },
   });
 
-export const deleteFormLayout = (org, app, layoutName) =>
-  del(formLayoutPath(org, app, layoutName));
+export const deleteFormLayout = (org, app, layoutName) => del(formLayoutPath(org, app, layoutName));
 
 export const saveFormLayoutSettings = (org, app, payload) =>
   post(layoutSettingsPath(org, app), payload);
 
-export const saveRuleConfig = (org, app, payload) =>
-  post(ruleConfigPath(org, app), payload);
+export const saveRuleConfig = (org, app, payload) => post(ruleConfigPath(org, app), payload);

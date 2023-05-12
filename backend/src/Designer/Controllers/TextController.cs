@@ -297,5 +297,20 @@ namespace Altinn.Studio.Designer.Controllers
                 return Problem(title: $"Failed to parse App/config/texts/{filename} as JSON", instance: $"App/config/texts/{filename}", detail: $"Failed to parse App/config/texts/{filename} as JSON\n" + ex.Message);
             }
         }
+
+        [Route("translate/{languageCode}")]
+        public async Task<IActionResult> TranslateTextAsync(string org, string app, string languageCode, [FromBody] TextResourceElement textResourceElement)
+        {
+            try
+            {
+                string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
+                await _textsService.TranslateText(org, app, developer, languageCode, textResourceElement.Id, textResourceElement.Value);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest($"The text resource, resource.{languageCode}.json, could not be translated.\n{e.StackTrace}");
+            }
+        }
     }
 }

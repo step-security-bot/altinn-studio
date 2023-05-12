@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import postMessages from 'app-shared/utils/postMessages';
 import { useDispatch, useSelector } from 'react-redux';
+import { QueryKey } from './types/QueryKey';
+import { queryClient } from 'app-development/common/ServiceContext';
 import { ErrorMessageComponent } from './components/message/ErrorMessageComponent';
 import { FormDesigner } from './containers/FormDesigner';
 import { FormLayoutActions } from './features/formDesigner/formLayout/formLayoutSlice';
@@ -32,8 +34,12 @@ export function App() {
   const t = useText();
   const { org, app } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  queryClient.invalidateQueries([QueryKey.FormLayouts, org, app]);
 
-  const { isSuccess: isDatamodelFetched, isError: dataModelFetchedError } = useDatamodelQuery(org, app);
+  const { isSuccess: isDatamodelFetched, isError: dataModelFetchedError } = useDatamodelQuery(
+    org,
+    app
+  );
   const { data: formLayouts, isError: layoutFetchedError } = useFormLayoutsQuery(org, app);
   const { data: formLayoutSettings } = useFormLayoutSettingsQuery(org, app);
   const { isSuccess: areTextResourcesFetched } = useTextResourcesQuery(org, app);
@@ -48,7 +54,13 @@ export function App() {
   const widgetFetchedError = useSelector((state: IAppState) => state.widgets.error);
 
   const componentIsReady =
-    formLayouts && isWidgetFetched && formLayoutSettings && isDatamodelFetched && areTextResourcesFetched && isRuleModelFetched && isRuleConfigFetched;
+    formLayouts &&
+    isWidgetFetched &&
+    formLayoutSettings &&
+    isDatamodelFetched &&
+    areTextResourcesFetched &&
+    isRuleModelFetched &&
+    isRuleConfigFetched;
 
   const componentHasError = dataModelFetchedError || layoutFetchedError || widgetFetchedError;
 
@@ -124,10 +136,7 @@ export function App() {
     return (
       <>
         <ErrorMessageComponent />
-        <FormDesigner
-          layoutOrder={layoutOrder}
-          selectedLayout={selectedLayout}
-        />
+        <FormDesigner layoutOrder={layoutOrder} selectedLayout={selectedLayout} />
       </>
     );
   }

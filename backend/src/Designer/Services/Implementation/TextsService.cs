@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
@@ -290,6 +291,42 @@ namespace Altinn.Studio.Designer.Services.Implementation
             }
 
             await UpdateKeysInLayoutsInLayoutSet(org, app, developer, null, keyMutations);
+        }
+
+        public async Task TranslateText(string org, string app, string developer, string languageCode, string key, string value)
+        {
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            var languages = GetLanguages(org, app, developer);
+            languages.Remove(languageCode);
+
+            var endpoint = "https://api.openai.com/v1/completions";
+            var apiKey = "<your-api-key>"; // TODO: fetch this from ENV/keyvault
+            var model = "text-davinci-003";
+            var maxTokens = 20;
+            var temperature = 0.3;
+
+            foreach(string language in languages){
+                var client = new HttpClient();
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
+                var prompt = $"translate the following text to {language}: {value}";
+                var requestData = new
+                {
+                    model = model,
+                    prompt = prompt,
+                    max_tokens = maxTokens,
+                    temperature = temperature
+                };
+                var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(endpoint, content);
+                var result = await response.Content.ReadAsStringAsync();
+                var jsonNode = JsonNode.Parse(result);
+                var text = jsonNode["choices"][0]["text"].ToString().Replace("\n", "");
+                Console.WriteLine(result);
+                var textResouces = await altinnAppGitRepository.GetTextV1(language);
+                var index = textResouces.Resources.IndexOf(textResouces.Resources.First(x => x.Id == key));
+                textResouces.Resources[index].Value = text;
+                await altinnAppGitRepository.SaveTextV1(language, textResouces);
+            }
         }
 
         /// <summary>

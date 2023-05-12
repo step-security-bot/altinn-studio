@@ -52,7 +52,6 @@ export const datamodelMetadataPath = (org, app) => `/designer/api/${org}/${app}/
 // Organizations
 export const orgsListPath = () => '/designer/api/orgs'; // Get
 
-
 // Preview
 export const previewPath = (org, app) => `/preview/${org}/${app}`;
 
@@ -100,6 +99,7 @@ export const textLanguagesPath = (org, app) => `/designer/api/${org}/${app}/text
 export const textResourcesPath = (org, app, langCode) => `/designer/api/${org}/${app}/text/language/${langCode}`; // Get, Post, Put, Delete
 export const serviceNamePath = (org, app) => `/designer/api/${org}/${app}/text/service-name`; // Get
 export const textResourceIdsPath = (org, app) => `/designer/api/${org}/${app}/text/keys`; // Put
+export const translateTextResourcePath = (org, app, langCode) => `/designer/api/${org}/${app}/text/translate/${langCode}`; // Put
 
 // Text - new
 

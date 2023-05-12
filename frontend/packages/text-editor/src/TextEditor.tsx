@@ -26,6 +26,8 @@ export interface TextEditorProps {
   textResourceFiles: ITextResources;
   updateTextId: (data: TextResourceIdMutation) => void;
   upsertTextResource: (data: UpsertTextResourceMutation) => void;
+  translateTextResource: (data: UpsertTextResourceMutation) => void;
+  translationLoading?: boolean;
 }
 
 export const TextEditor = ({
@@ -39,6 +41,8 @@ export const TextEditor = ({
   textResourceFiles,
   updateTextId,
   upsertTextResource,
+  translateTextResource,
+  translationLoading,
 }: TextEditorProps) => {
   const resourceRows = mapResourceFilesToTableRows(textResourceFiles);
 
@@ -99,7 +103,9 @@ export const TextEditor = ({
             searchQuery={searchQuery}
             updateEntryId={updateEntryId}
             upsertTextResource={upsertTextResource}
+            translateTextResource={translateTextResource}
             selectedLanguages={selectedLangCodes}
+            translationLoading={translationLoading}
           />
         </div>
       </div>

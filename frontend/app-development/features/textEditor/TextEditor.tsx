@@ -16,6 +16,8 @@ import {
   useTextIdMutation,
   useUpsertTextResourceMutation,
 } from '../../hooks/mutations';
+import { queryClient } from 'app-development/common/ServiceContext';
+import { useTranslateTextResourceMutation } from 'app-development/hooks/mutations/useTranslateTextResourceMutation';
 
 const storageGroupName = 'textEditorStorage';
 
@@ -29,7 +31,7 @@ export const TextEditor = () => {
   const {
     data: textResources,
     isLoading: isInitialLoadingLang,
-    isFetching: isFetchingTranslations
+    isFetching: isFetchingTranslations,
   } = useTextResourcesQuery(org, app);
   const setSelectedLangCodes = async (langs: string[]) => {
     const params: any = { lang: langs.join('-') };
@@ -75,6 +77,12 @@ export const TextEditor = () => {
     setHideIntroPage(setLocalStorage(storageGroupName, 'hideTextsIntroPage', true));
 
   const { mutate: upsertTextResource } = useUpsertTextResourceMutation(org, app);
+  const { mutate: translateTextResource, isLoading: translationLoading } =
+    useTranslateTextResourceMutation(org, app);
+
+  const refetchLayoutFiles = () => {
+    queryClient.invalidateQueries([org, app, 'FormLayouts']);
+  };
 
   if (isInitialLoadingLang || isFetchingTranslations || !textResources) {
     return <AltinnSpinner />;
@@ -123,8 +131,13 @@ export const TextEditor = () => {
         setSearchQuery={setSearchQuery}
         setSelectedLangCodes={setSelectedLangCodes}
         textResourceFiles={textResources || {}}
-        updateTextId={(data: TextResourceIdMutation) => textIdMutation([data])}
+        updateTextId={(data: TextResourceIdMutation) => {
+          textIdMutation([data]);
+          refetchLayoutFiles();
+        }}
         upsertTextResource={upsertTextResource}
+        translateTextResource={translateTextResource}
+        translationLoading={translationLoading}
       />
     </>
   );
