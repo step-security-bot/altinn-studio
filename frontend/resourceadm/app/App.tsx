@@ -7,6 +7,7 @@ import { PageLayout } from 'resourceadm/pages/PageLayout';
 import { ResourceDashboard } from '../pages/ResourceDashboard';
 import { RessurstilgangSide1 } from '../pages/RessurstilgangSide1';
 import { OlsenbandenPage } from '../pages/OlsenbandenPage';
+import { PolicyEditor } from '../pages/PolicyEditor';
 import { TestPage } from '../pages/TestPage';
 
 import { Route, Routes } from 'react-router-dom';
@@ -17,11 +18,9 @@ import { useOrganizationsQuery } from 'resourceadm/hooks/useOrganizationQueries'
 
 import { ErrorMessage } from 'resourceadm/components/ErrorMessage';
 
-
 export const App = (): JSX.Element => {
-
   // console.log("Er i App. Skal ha user og organizations");
-  
+
   // 15.05.23: Ettersom dette er RESSURS-App så skal repo være definert om
   // bruker og organisasjon er definert... men vi har bare en ARRAY av org så langt...
   // ---> diskuterte med Rune: han sier dette er avhengig av knapp/link fra Dashboard
@@ -34,11 +33,8 @@ export const App = (): JSX.Element => {
   const { data: user, isError: isUserError } = useUserQuery();
   const { data: organizations, isError: isOrganizationsError } = useOrganizationsQuery();
 
-
   const componentIsReady = user && organizations;
   const componentHasError = isUserError || isOrganizationsError;
-
-
 
   const getErrorMessage = (): { title: string; message: string } => {
     const defaultTitle = 'Feil oppstod ved innlasting av';
@@ -66,7 +62,6 @@ export const App = (): JSX.Element => {
     return <ErrorMessage title={error.title} message={error.message} />;
   }
 
-
   // 14.05.23: selve <Dashboard /> komponenten er en spagettiklump
   // av starredRepos sammenfiltringer. Nesten umulig å gjenbruke.
   // Muligens kan vi begynne med komponenten <RepoList /> og
@@ -76,23 +71,28 @@ export const App = (): JSX.Element => {
     return (
       <div className={classes.root}>
         <Routes>
-
-        <Route element={ <TestPage /> } >
-            <Route path='/' element={ <ResourceDashboard user = {user} organizations={organizations} /> } />
+          <Route element={<TestPage />}>
+            <Route
+              path='/'
+              element={<ResourceDashboard user={user} organizations={organizations} />}
+            />
           </Route>
 
           <Route element={<PageLayout />}>
-            <Route path='/skatt/repo1'  element={ <ResourceDashboard user = {user} organizations={organizations} /> } />
+            <Route
+              path='/skatt/repo1'
+              element={<ResourceDashboard user={user} organizations={organizations} />}
+            />
           </Route>
 
-          <Route path='/skatt/repo2' element={ <TestPage /> } />
+          <Route path='/skatt/repo2' element={<TestPage />} />
 
-          <Route path='/skatt/repo3' element={<PageLayout />}/>
+          <Route path='/skatt/repo3' element={<PageLayout />} />
 
-          <Route path='/skatt/dummy1' element={ <RessurstilgangSide1 /> } />
+          <Route path='/skatt/dummy1' element={<RessurstilgangSide1 />} />
 
-          <Route path='/olsenbanden' element={ <OlsenbandenPage /> } />
-
+          <Route path='/olsenbanden' element={<OlsenbandenPage />} />
+          <Route path='/policyEditor' element={<PolicyEditor />} />
         </Routes>
       </div>
     );

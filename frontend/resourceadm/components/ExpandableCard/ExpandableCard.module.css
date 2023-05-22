@@ -1,0 +1,25 @@
+.wrapper {
+  background-color: #D9D9D9;
+  border-radius: 12px;
+  padding: 24px;
+  border: solid 1px #D9D9D9;
+}
+
+.title {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.expandButton{
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.bottomWrapper {
+  border: solid red;
+}
