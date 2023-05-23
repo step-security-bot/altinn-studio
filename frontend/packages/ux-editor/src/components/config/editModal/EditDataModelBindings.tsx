@@ -43,20 +43,20 @@ export const EditDataModelBindings = ({
 
   const { uniqueKey, key, label } = renderOptions || {};
   return (
-     <div key={uniqueKey || ''}>
+    <div key={uniqueKey || ''}>
       <Label htmlFor={`selectDataModelSelect-${label}`}>
-        {
-          label
-            ? `${t('ux_editor.modal_properties_data_model_helper')} ${t('general.for')} ${label}`
-            : t('ux_editor.modal_properties_data_model_helper')
-        }
+        {label
+          ? `${t('ux_editor.modal_properties_data_model_helper')} ${t('general.for')} ${label}`
+          : t('ux_editor.modal_properties_data_model_helper')}
       </Label>
       <SelectDataModelComponent
         inputId={`selectDataModelSelect-${label}`}
         selectedElement={component.dataModelBindings[key || 'simpleBinding']}
-        onDataModelChange={(dataModelField: string) => handleDataModelChange(dataModelField, key)}
+        onDataModelChange={(dataModelField: string) =>
+          handleDataModelChange(dataModelField, key || 'simpleBinding')
+        }
         noOptionsMessage={t('general.no_options')}
       />
     </div>
-  )
+  );
 };
