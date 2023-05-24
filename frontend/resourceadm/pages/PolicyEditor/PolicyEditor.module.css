@@ -5,6 +5,7 @@
   margin: 0;
   padding-inline: 10%;
   padding-top: 20px;
+  padding-bottom: 50px;
 }
 .policyEditorContainer {
   width: 595px;
@@ -12,9 +13,10 @@
 }
 .policyEditorTop {
   width: 450px;
+  margin-bottom: 50px;
 }
-.ruleCardsWrapper {
-  margin-top: 40px;
+.space {
+  margin-block: 20px;
 }
 .policyEditorHeader {
   margin-bottom: 40px;

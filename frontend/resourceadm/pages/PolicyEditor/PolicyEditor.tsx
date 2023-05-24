@@ -1,10 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classes from './PolicyEditor.module.css';
 import { ExternalLinkIcon } from '@navikt/aksel-icons';
-import { ExpandableCard } from 'resourceadm/components/ExpandableCard';
+import { ExpandablePolicyCard } from 'resourceadm/components/ExpandablePolicyCard';
+import { CardButton } from 'resourceadm/components/CardButton';
 
+/**
+ * Displays the content where a user can add and edit a policy
+ */
 export const PolicyEditor = () => {
   // TODO - translation
+
+  const [policyRules, setPolicyRules] = useState([]); // TODO - Add the Type that is created on the cards
+
+  const displayRules = policyRules.map((pr, i) => (
+    <div className={classes.space} key={i}>
+      <ExpandablePolicyCard />
+    </div>
+  ));
 
   return (
     <div className={classes.policyEditorWrapper}>
@@ -55,24 +67,16 @@ export const PolicyEditor = () => {
             TODO - drop down
           </p>
         </div>
-        <div className={classes.ruleCardsWrapper}>
-          <ExpandableCard cardTitle='Lese, skrive, arkivere'>
-            <p className={classes.subHeader}>Hvilket nivå i ressursen skal reglene gjelde?</p>
-            <p
-              style={{
-                marginTop: '20px',
-                border: 'solid 2px #0062BA',
-                paddingInline: '5px',
-                paddingBlock: '3px',
-                borderRadius: '3px',
-              }}
-            >
-              TODO - drop down
-            </p>
-            <p className={classes.subHeader}>Hvilke rettigheter skal gis?</p>
-            <p /* TODO - make small */>Velg minimum ett alternativ fra listen under</p>
-          </ExpandableCard>
-          <p>TODO - Knapp for å legge til et regelsett til</p>
+        {displayRules}
+        <div className={classes.space}>
+          <CardButton
+            buttonText='Legg til ekstra regelsett'
+            onClick={() => {
+              setPolicyRules((v) => [...v, ...[{ v: 1 }]]);
+
+              // Make sure the already open card is closed
+            }}
+          />
         </div>
       </div>
     </div>
