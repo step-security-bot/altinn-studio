@@ -42,8 +42,47 @@
   text-decoration-thickness: 1.5px;
 }
 
-.selectWrapper {
-margin-top: 10px;
+.componentWrapper {
+  margin-top: 10px;
+}
+
+.textFieldIdWrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.idBox {
+  background-color: #E9EAEC;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1px;
+  padding: 2px;
+  margin-right: 8px;
+}
+
+.idBoxText {
+  font-size: 10px;
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+}
+
+.idText {
+  font-size: 14px;
+  font-weight: 400;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.emptyPolicyName {
+  height: 36px;
+  margin-top: 5px;
 }
 
 p {

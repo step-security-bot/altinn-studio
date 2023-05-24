@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import classes from './PolicyEditor.module.css';
 import { ExternalLinkIcon } from '@navikt/aksel-icons';
+import { PencilWritingIcon } from '@navikt/aksel-icons';
 import { ExpandablePolicyCard } from 'resourceadm/components/ExpandablePolicyCard';
 import { CardButton } from 'resourceadm/components/CardButton';
 import { Select } from '@digdir/design-system-react';
+import { TextField } from '@digdir/design-system-react';
+import { Button } from '@digdir/design-system-react';
 
 /**
  * Displays the content where a user can add and edit a policy
  */
 export const PolicyEditor = () => {
   // TODO - translation
-
+  const [policyName, setPolicyName] = useState('');
+  const [policyId, setPolicyId] = useState('altinnapp.ORGNAME.');
   const [policyRules, setPolicyRules] = useState([]); // TODO - Add the Type that is created on the cards
 
   const displayRules = policyRules.map((pr, i) => (
@@ -18,6 +22,12 @@ export const PolicyEditor = () => {
       <ExpandablePolicyCard />
     </div>
   ));
+
+  const mapPolicyNameToPolicyId = (text: string): string => {
+    // TODO - handle illegal characters
+
+    return text.replaceAll(' ', '-');
+  };
 
   return (
     <div className={classes.policyEditorWrapper}>
@@ -30,18 +40,35 @@ export const PolicyEditor = () => {
             og gjenbruke policyen. Pass på at navnet er forståelig og gjenkjennbart. Om mulig, bruk
             nøkkelord som man kan søke etter.
           </p>
-          {/* TODO - Make separate component for the search box and the thing below it */}
-          <p
-            style={{
-              marginTop: '20px',
-              border: 'solid 2px #0062BA',
-              paddingInline: '5px',
-              paddingBlock: '3px',
-              borderRadius: '3px',
-            }}
-          >
-            TODO - altinnapp.svv....{' '}
-          </p>
+          <div className={classes.componentWrapper}>
+            <TextField
+              value={policyName}
+              onChange={(e) => setPolicyName(e.target.value)}
+              placeholder='Navn på policyen'
+            />
+            {policyName.length > 0 ? (
+              <div className={classes.textFieldIdWrapper}>
+                <div className={classes.idBox}>
+                  <p className={classes.idBoxText}>id</p>
+                </div>
+                <p className={classes.idText}>
+                  {policyId.split('.')[0]}.{policyId.split('.')[1]}.
+                  <strong>{mapPolicyNameToPolicyId(policyName)}</strong>
+                </p>
+                <Button
+                  icon={<PencilWritingIcon title='a11y-title' fontSize='1.5rem' />}
+                  variant='quiet'
+                  onClick={() => {
+                    alert('todo');
+                    // TODO - make it possible to edit the id to something else than the policy name
+                    setPolicyId(policyId);
+                  }}
+                />
+              </div>
+            ) : (
+              <div className={classes.emptyPolicyName} />
+            )}
+          </div>
           <p className={classes.subHeader}>Velg ressurs</p>
           <p>
             Om du har ingen ressurs kan du{' '}
@@ -56,7 +83,7 @@ export const PolicyEditor = () => {
             og kobble den til i denne policyeditoren senere eller fra ressureditoren som en del av
             policynivået.
           </p>
-          <div className={classes.selectWrapper}>
+          <div className={classes.componentWrapper}>
             <Select
               options={[
                 { value: 'Ressurs 1', label: 'Ressurs 1' },
