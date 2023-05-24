@@ -1,5 +1,27 @@
 .subHeader {
   font-weight: 500;
+  font-size: 16px;
   margin-bottom: 5px;
-  margin-top: 20px;
+  margin-top: 40px;
+}
+
+.text {
+  font-weight: 400;
+  font-size: 16px;
+}
+
+.smallText {
+  font-weight: 400;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+}
+
+.chipWrapper {
+  display: flex;
+  margin-top: 10px;
+}
+
+.textAreaWrapper {
+  margin-top: 10px;
 }

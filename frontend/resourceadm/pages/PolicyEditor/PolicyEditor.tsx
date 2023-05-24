@@ -3,6 +3,7 @@ import classes from './PolicyEditor.module.css';
 import { ExternalLinkIcon } from '@navikt/aksel-icons';
 import { ExpandablePolicyCard } from 'resourceadm/components/ExpandablePolicyCard';
 import { CardButton } from 'resourceadm/components/CardButton';
+import { Select } from '@digdir/design-system-react';
 
 /**
  * Displays the content where a user can add and edit a policy
@@ -55,17 +56,15 @@ export const PolicyEditor = () => {
             og kobble den til i denne policyeditoren senere eller fra ressureditoren som en del av
             policynivået.
           </p>
-          <p
-            style={{
-              marginTop: '20px',
-              border: 'solid 2px #0062BA',
-              paddingInline: '5px',
-              paddingBlock: '3px',
-              borderRadius: '3px',
-            }}
-          >
-            TODO - drop down
-          </p>
+          <div className={classes.selectWrapper}>
+            <Select
+              options={[
+                { value: 'Ressurs 1', label: 'Ressurs 1' },
+                { value: 'Ressurs 2', label: 'Ressurs 2' },
+                { value: 'Ressurs 3', label: 'Ressurs 3' },
+              ]}
+            />
+          </div>
         </div>
         {displayRules}
         <div className={classes.space}>
