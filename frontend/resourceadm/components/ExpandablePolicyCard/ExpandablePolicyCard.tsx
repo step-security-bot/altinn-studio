@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
+import { Select, TextArea } from '@digdir/design-system-react';
+import { Chip } from '../Chip';
 import { ExpandableCard } from '../ExpandableCard';
 import classes from './ExpandablePolicyCard.module.css';
-import { Select } from '@digdir/design-system-react';
-import { TextArea } from '@digdir/design-system-react';
-import { Chip } from '../Chip';
 
 export const ExpandablePolicyCard = () => {
   const [isReadSelected, setIsReadSelected] = useState(false);

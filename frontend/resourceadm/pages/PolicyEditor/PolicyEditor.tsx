@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import classes from './PolicyEditor.module.css';
-import { ExternalLinkIcon } from '@navikt/aksel-icons';
-import { PencilWritingIcon } from '@navikt/aksel-icons';
+import { ExternalLinkIcon, PencilWritingIcon } from '@navikt/aksel-icons';
 import { ExpandablePolicyCard } from 'resourceadm/components/ExpandablePolicyCard';
 import { CardButton } from 'resourceadm/components/CardButton';
-import { Select } from '@digdir/design-system-react';
-import { TextField } from '@digdir/design-system-react';
-import { Button } from '@digdir/design-system-react';
+import { Select, TextField, Button } from '@digdir/design-system-react';
+import { PolicyRuleCardType } from 'resourceadm/types/global';
 
 /**
  * Displays the content where a user can add and edit a policy
@@ -15,18 +13,34 @@ export const PolicyEditor = () => {
   // TODO - translation
   const [policyName, setPolicyName] = useState('');
   const [policyId, setPolicyId] = useState('altinnapp.ORGNAME.');
-  const [policyRules, setPolicyRules] = useState([]); // TODO - Add the Type that is created on the cards
+  const [policyRules, setPolicyRules] = useState<PolicyRuleCardType[]>([]);
 
+  // Initial rule with empty values
+  const initialRule: PolicyRuleCardType = {
+    levelsInResource: [],
+    rightsToGive: [],
+    policiesGiveTo: [],
+    decisionText: '',
+  };
+
+  // Displays all the rule cards
   const displayRules = policyRules.map((pr, i) => (
     <div className={classes.space} key={i}>
       <ExpandablePolicyCard />
     </div>
   ));
 
+  // Checks the policy name for errors and returns the string formatted correctly
   const mapPolicyNameToPolicyId = (text: string): string => {
     // TODO - handle illegal characters
 
     return text.replaceAll(' ', '-');
+  };
+
+  const handleAddCardClick = () => {
+    setPolicyRules((v) => [...v, ...[initialRule]]);
+
+    // Make sure the already open card is closed
   };
 
   return (
@@ -95,14 +109,7 @@ export const PolicyEditor = () => {
         </div>
         {displayRules}
         <div className={classes.space}>
-          <CardButton
-            buttonText='Legg til ekstra regelsett'
-            onClick={() => {
-              setPolicyRules((v) => [...v, ...[{ v: 1 }]]);
-
-              // Make sure the already open card is closed
-            }}
-          />
+          <CardButton buttonText='Legg til ekstra regelsett' onClick={handleAddCardClick} />
         </div>
       </div>
     </div>
