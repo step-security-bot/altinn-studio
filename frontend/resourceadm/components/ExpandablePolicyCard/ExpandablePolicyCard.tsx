@@ -3,16 +3,26 @@ import { Select, TextArea } from '@digdir/design-system-react';
 import { Chip } from '../Chip';
 import { ExpandableCard } from '../ExpandableCard';
 import classes from './ExpandablePolicyCard.module.css';
+import { PolicyRuleCardType } from 'resourceadm/types/global';
 
-export const ExpandablePolicyCard = () => {
+interface Props {
+  policyRule: PolicyRuleCardType;
+}
+
+// TODO - Make it possible to delete a policy too
+export const ExpandablePolicyCard = ({ policyRule }: Props) => {
   const [isReadSelected, setIsReadSelected] = useState(false);
   const [isWriteSelected, setIsWriteSelected] = useState(false);
   const [isArchiveSelected, setIsArchiveSelected] = useState(false);
 
   const [reasonText, setReasonText] = useState('');
 
+  const getPolicyRuleId = () => {
+    return policyRule.RuleId.toString();
+  };
+
   return (
-    <ExpandableCard cardTitle='Lese, skrive, arkivere'>
+    <ExpandableCard cardTitle={`Regel ${getPolicyRuleId()}`}>
       <p className={classes.subHeader}>Hvilket nivå i ressursen skal reglene gjelde?</p>
       <Select
         options={[

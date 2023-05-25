@@ -1,54 +1,73 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import classes from './PolicyEditor.module.css';
-import { ExternalLinkIcon, PencilWritingIcon } from '@navikt/aksel-icons';
 import { ExpandablePolicyCard } from 'resourceadm/components/ExpandablePolicyCard';
 import { CardButton } from 'resourceadm/components/CardButton';
-import { Select, TextField, Button } from '@digdir/design-system-react';
+import { Button } from '@digdir/design-system-react';
 import { PolicyRuleCardType } from 'resourceadm/types/global';
+import { useLocation } from 'react-router-dom';
+import { policyMock1, policyMock2 } from 'resourceadm/data-mocks/policies';
+
+const emptyPolicyRule: PolicyRuleCardType = {
+  RuleId: 0,
+  Resources: [],
+  Actions: [],
+  Subject: [],
+  Description: '',
+};
 
 /**
  * Displays the content where a user can add and edit a policy
  */
 export const PolicyEditor = () => {
   // TODO - translation
-  const [policyName, setPolicyName] = useState('');
-  const [policyId, setPolicyId] = useState('altinnapp.ORGNAME.');
+
+  const { state } = useLocation();
+
+  // Set the resurceId sent in params or set it to null. If null, display error (TODO)
+  const resourceId = state === null ? null : state.resourceId;
+
   const [policyRules, setPolicyRules] = useState<PolicyRuleCardType[]>([]);
 
-  // Initial rule with empty values
-  const initialRule: PolicyRuleCardType = {
-    levelsInResource: [],
-    rightsToGive: [],
-    policiesGiveTo: [],
-    decisionText: '',
-  };
+  // TODO - implement useOnce hook to get the policy
+  useEffect(() => {
+    // TODO - API Call to get policy by the resource ID
+
+    // To test with a policy with already rules use this:
+    // setPolicyRules(policyMock1.Rules)
+
+    // To test with a policy with no rules use this:
+    setPolicyRules(policyMock2.Rules);
+
+    console.log('Policies:');
+    console.log(policyMock1);
+    console.log(policyMock2);
+  }, []);
 
   // Displays all the rule cards
   const displayRules = policyRules.map((pr, i) => (
     <div className={classes.space} key={i}>
-      <ExpandablePolicyCard />
+      <ExpandablePolicyCard policyRule={pr} />
     </div>
   ));
 
-  // Checks the policy name for errors and returns the string formatted correctly
-  const mapPolicyNameToPolicyId = (text: string): string => {
-    // TODO - handle illegal characters
-
-    return text.replaceAll(' ', '-');
-  };
-
   const handleAddCardClick = () => {
-    setPolicyRules((v) => [...v, ...[initialRule]]);
+    setPolicyRules((v) => [...v, ...[{ ...emptyPolicyRule, RuleId: policyRules.length + 1 }]]);
 
     // Make sure the already open card is closed
   };
 
   return (
+    // TODO - display spinner when loading
+    // TODO - display error if resourceId === null
     <div className={classes.policyEditorWrapper}>
       <div className={classes.policyEditorContainer}>
         <div className={classes.policyEditorTop}>
           <h2 className={classes.policyEditorHeader}>Policy editor</h2>
-          <p className={classes.subHeader}>Navn på policyen</p>
+          {/*<p className={classes.subHeader}>Navn på policyen</p>*/}
+          <p>
+            Endrer regler for policy med navn: <strong>{resourceId}</strong>
+          </p>
+          {/* TODO - Delete this?
           <p>
             Navnet bør være beskrivende for hva policyen handler om slik at andre enkelt kan forstå
             og gjenbruke policyen. Pass på at navnet er forståelig og gjenkjennbart. Om mulig, bruk
@@ -60,7 +79,7 @@ export const PolicyEditor = () => {
               onChange={(e) => setPolicyName(e.target.value)}
               placeholder='Navn på policyen'
             />
-            {policyName.length > 0 ? (
+            policyName.length > 0 ? (
               <div className={classes.textFieldIdWrapper}>
                 <div className={classes.idBox}>
                   <p className={classes.idBoxText}>id</p>
@@ -81,7 +100,7 @@ export const PolicyEditor = () => {
               </div>
             ) : (
               <div className={classes.emptyPolicyName} />
-            )}
+            )
           </div>
           <p className={classes.subHeader}>Velg ressurs</p>
           <p>
@@ -91,7 +110,7 @@ export const PolicyEditor = () => {
               href=''
               onClick={() => alert('Todo - Add correct url.')}
             >
-              lage en ny ressurs {/* TODO - Add Icon */}
+              lage en ny ressurs
               <ExternalLinkIcon title='a11y-title' fontSize='1.4rem' />
             </a>{' '}
             og kobble den til i denne policyeditoren senere eller fra ressureditoren som en del av
@@ -105,12 +124,18 @@ export const PolicyEditor = () => {
                 { value: 'Ressurs 3', label: 'Ressurs 3' },
               ]}
             />
-          </div>
+          </div>*/}
         </div>
-        {displayRules}
+        <p className={classes.subHeader}>Se eller legg til regler for policyen</p>
+        {/*displayRules*/}
+        <ExpandablePolicyCard policyRule={emptyPolicyRule} />
+
         <div className={classes.space}>
           <CardButton buttonText='Legg til ekstra regelsett' onClick={handleAddCardClick} />
         </div>
+        <Button type='button' onClick={() => alert('todo - save')}>
+          Lagre policyen
+        </Button>
       </div>
     </div>
   );

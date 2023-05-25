@@ -8,6 +8,7 @@ import { ResourceDashboard } from '../pages/ResourceDashboard';
 import { RessurstilgangSide1 } from '../pages/RessurstilgangSide1';
 import { OlsenbandenPage } from '../pages/OlsenbandenPage';
 import { PolicyEditor } from '../pages/PolicyEditor';
+import { PolicyEditorStartPage } from '../pages/PolicyEditorStartPage';
 import { TestPage } from '../pages/TestPage';
 
 import { Route, Routes } from 'react-router-dom';
@@ -92,6 +93,7 @@ export const App = (): JSX.Element => {
           <Route path='/skatt/dummy1' element={<RessurstilgangSide1 />} />
 
           <Route path='/olsenbanden' element={<OlsenbandenPage />} />
+          <Route path='/PolicyEditorStartPage' element={<PolicyEditorStartPage />} />
           <Route path='/policyEditor' element={<PolicyEditor />} />
         </Routes>
       </div>
