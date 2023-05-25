@@ -7,6 +7,9 @@ import { PolicyRuleCardType } from 'resourceadm/types/global';
 import { useLocation } from 'react-router-dom';
 import { actionsListMock, policyMock1, policyMock2 } from 'resourceadm/data-mocks/policies';
 
+/**
+ * Empty rule when new card added
+ */
 const emptyPolicyRule: PolicyRuleCardType = {
   RuleId: 0,
   Resources: [],
@@ -20,14 +23,13 @@ const emptyPolicyRule: PolicyRuleCardType = {
  */
 export const PolicyEditor = () => {
   // TODO - translation
+  // TODO - Make this component able to manage and control the values inside the cards
 
   const { state } = useLocation();
 
   // Set the resurceId sent in params or set it to null. If null, display error (TODO)
   const resourceId = state === null ? null : state.resourceId;
-  console.log('resourceId: ' + resourceId);
   const resourceType = state === null ? null : state.resourceType;
-  console.log('resourceType: ' + resourceType);
 
   // TODO - replace with list from backend
   const [actions, setActions] = useState<string[]>([]);
@@ -37,10 +39,9 @@ export const PolicyEditor = () => {
 
   // TODO - implement useOnce hook to get the policy
   useEffect(() => {
-    // TODO - API Call to get policy by the resource ID
-
+    // TODO - API Call to get the correct actions
     setActions(actionsListMock);
-
+    // TODO - API Call to get policy by the resource ID
     setPolicyRules(resourceId === 'test_id_1' ? policyMock1.Rules : policyMock2.Rules);
   }, [resourceId]);
 
@@ -51,6 +52,9 @@ export const PolicyEditor = () => {
     </div>
   ));
 
+  /**
+   * Handles adding of more cards
+   */
   const handleAddCardClick = () => {
     setPolicyRules((prevRules) => [
       ...prevRules,

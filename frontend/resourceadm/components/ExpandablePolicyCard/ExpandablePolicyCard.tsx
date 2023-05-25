@@ -11,18 +11,23 @@ interface Props {
   actions: string[];
 }
 
-// TODO - Make it possible to delete a policy too
+// TODO - Make it possible to delete a rule too
 export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
-  const [reasonText, setReasonText] = useState('');
-
   // TODO - make it controllable by parent
   const [resources, setResources] = useState(policyRule.Resources);
   const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
+  const [ruleDescription, setRuleDescription] = useState('');
 
+  /**
+   * Gets the id of the policy
+   */
   const getPolicyRuleId = () => {
     return policyRule.RuleId.toString();
   };
 
+  /**
+   * Displays the list of resources
+   */
   const displayResources = resources.map((r, i) => {
     return (
       <PolicyResourceFields
@@ -37,6 +42,9 @@ export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
     );
   });
 
+  /**
+   * Handles the changes in the input fields
+   */
   const handleInputInputChange = (index: number, field: 'id' | 'type', value: string) => {
     const updatedResources = [...resources];
     updatedResources[index] = {
@@ -46,6 +54,9 @@ export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
     setResources(updatedResources);
   };
 
+  /**
+   * Handles the addition of more resources
+   */
   const handleClickAddResource = () => {
     const newResource: PolicyRuleResourceType = {
       id: '',
@@ -55,6 +66,9 @@ export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
     setResources([...resources, newResource]);
   };
 
+  /**
+   * Handles the removal of resources
+   */
   const handleRemoveResource = (index: number) => {
     const updatedResources = [...resources];
     updatedResources.splice(index, 1);
@@ -130,8 +144,8 @@ export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
         <TextArea
           resize='vertical'
           placeholder='Beskrivelse beskrevet her i tekst av tjenesteeier'
-          value={reasonText}
-          onChange={(e) => setReasonText(e.currentTarget.value)}
+          value={ruleDescription}
+          onChange={(e) => setRuleDescription(e.currentTarget.value)}
         />
       </div>
     </ExpandableCard>

@@ -9,6 +9,10 @@ import {
   resourceTypeMock3,
 } from 'resourceadm/data-mocks/policies';
 
+/**
+ * Dummy component to display buttons where the user can click to view either
+ * the create new policy or edit policy functionality
+ */
 export const PolicyEditorStartPage = () => {
   const navigate = useNavigate();
   return (
