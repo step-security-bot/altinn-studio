@@ -8,18 +8,16 @@ import { PolicyResourceFields } from '../PolicyResourceFields';
 
 interface Props {
   policyRule: PolicyRuleCardType;
+  actions: string[];
 }
 
 // TODO - Make it possible to delete a policy too
-export const ExpandablePolicyCard = ({ policyRule }: Props) => {
-  const [isReadSelected, setIsReadSelected] = useState(false);
-  const [isWriteSelected, setIsWriteSelected] = useState(false);
-  const [isArchiveSelected, setIsArchiveSelected] = useState(false);
-
+export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
   const [reasonText, setReasonText] = useState('');
 
   // TODO - make it controllable by parent
   const [resources, setResources] = useState(policyRule.Resources);
+  const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
 
   const getPolicyRuleId = () => {
     return policyRule.RuleId.toString();
@@ -63,6 +61,39 @@ export const ExpandablePolicyCard = ({ policyRule }: Props) => {
     setResources(updatedResources);
   };
 
+  /**
+   * Displays the actions
+   */
+  const displayActions = actions.map((a, i) => {
+    return (
+      <Chip
+        key={i}
+        text={a}
+        isSelected={selectedActions.includes(a)}
+        onClick={() => handleClickAction(i, a)}
+      />
+    );
+  });
+
+  /**
+   * Removes or adds an action
+   */
+  const handleClickAction = (index: number, action: string) => {
+    // If already present, remove it
+    if (selectedActions.includes(actions[index])) {
+      const updatedSelectedActions = [...selectedActions];
+      const selectedActionIndex = selectedActions.findIndex((a) => a === action);
+      updatedSelectedActions.splice(selectedActionIndex, 1);
+      setSelectedActions(updatedSelectedActions);
+    }
+    // else add it
+    else {
+      const updatedSelectedActions = [...selectedActions];
+      updatedSelectedActions.push(action);
+      setSelectedActions(updatedSelectedActions);
+    }
+  };
+
   return (
     <ExpandableCard cardTitle={`Regel ${getPolicyRuleId()}`}>
       {/*<p className={classes.subHeader}>Hvilket nivå i ressursen skal reglene gjelde?</p>
@@ -81,28 +112,24 @@ export const ExpandablePolicyCard = ({ policyRule }: Props) => {
       </Button>
       <p className={classes.subHeader}>Hvilke rettigheter skal gis?</p>
       <p className={classes.smallText}>Velg minimum ett alternativ fra listen under</p>
-      <div className={classes.chipWrapper}>
-        <Chip text='Les' isSelected={isReadSelected} onClick={() => setIsReadSelected((v) => !v)} />
-        <Chip
-          text='Skriv'
-          isSelected={isWriteSelected}
-          onClick={() => setIsWriteSelected((v) => !v)}
-        />
-        <Chip
-          text='Arkiver'
-          isSelected={isArchiveSelected}
-          onClick={() => setIsArchiveSelected((v) => !v)}
-        />
-        {/* TODO - Find out if it should be added more, and how it should be done */}
-      </div>
+      <div className={classes.chipWrapper}>{displayActions}</div>
       <p className={classes.subHeader}>Hvem skal ha disse rettighetene?</p>
       <p>TODO</p>
-      <p className={classes.subHeader}>Hvorfor har du tatt disse valgene?</p>
+      {/*<p className={classes.subHeader}>Hvorfor har du tatt disse valgene?</p>
       <p className={classes.text}>Beskriv grunnlaget for hvorfor disse rettighetene gis</p>
       <div className={classes.textAreaWrapper}>
         <TextArea
           resize='vertical'
           placeholder='Grunnlag beskrevet her i tekst av tjenesteeier'
+          value={reasonText}
+          onChange={(e) => setReasonText(e.currentTarget.value)}
+        />
+    </div>*/}
+      <p className={classes.subHeader}>Legg til en beskrivelse av regelen</p>
+      <div className={classes.textAreaWrapper}>
+        <TextArea
+          resize='vertical'
+          placeholder='Beskrivelse beskrevet her i tekst av tjenesteeier'
           value={reasonText}
           onChange={(e) => setReasonText(e.currentTarget.value)}
         />

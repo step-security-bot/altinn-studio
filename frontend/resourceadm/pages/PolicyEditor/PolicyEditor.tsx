@@ -5,7 +5,7 @@ import { CardButton } from 'resourceadm/components/CardButton';
 import { Button } from '@digdir/design-system-react';
 import { PolicyRuleCardType } from 'resourceadm/types/global';
 import { useLocation } from 'react-router-dom';
-import { policyMock1, policyMock2 } from 'resourceadm/data-mocks/policies';
+import { actionsListMock, policyMock1, policyMock2 } from 'resourceadm/data-mocks/policies';
 
 const emptyPolicyRule: PolicyRuleCardType = {
   RuleId: 0,
@@ -29,33 +29,31 @@ export const PolicyEditor = () => {
   const resourceType = state === null ? null : state.resourceType;
   console.log('resourceType: ' + resourceType);
 
+  // TODO - replace with list from backend
+  const [actions, setActions] = useState<string[]>([]);
+
+  // TODO - Make it possible to update values inside the rules tooo
   const [policyRules, setPolicyRules] = useState<PolicyRuleCardType[]>([]);
 
   // TODO - implement useOnce hook to get the policy
   useEffect(() => {
     // TODO - API Call to get policy by the resource ID
 
-    // To test with a policy with already rules use this:
-    // setPolicyRules(policyMock1.Rules)
+    setActions(actionsListMock);
 
-    // To test with a policy with no rules use this:
-    setPolicyRules(policyMock2.Rules);
-
-    console.log('Policies:');
-    console.log(policyMock1);
-    console.log(policyMock2);
-  }, []);
+    setPolicyRules(resourceId === 'test_id_1' ? policyMock1.Rules : policyMock2.Rules);
+  }, [resourceId]);
 
   // Displays all the rule cards
   const displayRules = policyRules.map((pr, i) => (
     <div className={classes.space} key={i}>
-      <ExpandablePolicyCard policyRule={pr} />
+      <ExpandablePolicyCard policyRule={pr} actions={actions} />
     </div>
   ));
 
   const handleAddCardClick = () => {
-    setPolicyRules((v) => [
-      ...v,
+    setPolicyRules((prevRules) => [
+      ...prevRules,
       ...[
         {
           ...emptyPolicyRule,
@@ -139,18 +137,24 @@ export const PolicyEditor = () => {
           </div>*/}
         </div>
         <p className={classes.subHeader}>Se eller legg til regler for policyen</p>
-        {/*displayRules*/}
-        <ExpandablePolicyCard
+        {displayRules}
+        {/*<ExpandablePolicyCard
           policyRule={{
             ...emptyPolicyRule,
             RuleId: policyRules.length + 1,
             Resources: [{ type: resourceType, id: resourceId }],
           }}
-        />
+        />*/}
         <div className={classes.space}>
           <CardButton buttonText='Legg til ekstra regelsett' onClick={handleAddCardClick} />
         </div>
-        <Button type='button' onClick={() => alert('todo - save')}>
+        <Button
+          type='button'
+          onClick={() => {
+            console.log('policyRules', policyRules);
+            // alert('todo - save');
+          }}
+        >
           Lagre policyen
         </Button>
       </div>

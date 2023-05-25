@@ -24,7 +24,7 @@ const resourceMock2: PolicyRuleResourceType = {
 const ruleMock1: PolicyRuleCardType = {
   RuleId: 1,
   Resources: [resourceMock1, resourceMock2],
-  Actions: ['Read', 'Write'],
+  Actions: ['read', 'write'],
   Subject: ['Styreleder', 'Styremedlem'],
   Description: 'Dette er en forklaring på hva regelen er.'
 }
@@ -37,3 +37,12 @@ export const policyMock1: PolicyType = {
 export const policyMock2: PolicyType = {
   Rules: []
 };
+
+// ACTIONS
+export const actionsListMock: string[] = [
+  "read",
+  "write",
+  "confirm",
+  "sign",
+  "delete"
+]
