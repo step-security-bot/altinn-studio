@@ -2,7 +2,12 @@ import React from 'react';
 import classes from './PolicyEditorStartPage.module.css';
 import { Button } from '@digdir/design-system-react';
 import { useNavigate } from 'react-router-dom';
-import { resourceId1, resourceId3 } from 'resourceadm/data-mocks/policies';
+import {
+  resourceIdMock1,
+  resourceIdMock3,
+  resourceTypeMock1,
+  resourceTypeMock3,
+} from 'resourceadm/data-mocks/policies';
 
 export const PolicyEditorStartPage = () => {
   const navigate = useNavigate();
@@ -16,7 +21,8 @@ export const PolicyEditorStartPage = () => {
             onClick={() => {
               navigate('/policyEditor', {
                 state: {
-                  resourceId: resourceId3,
+                  resourceId: resourceIdMock3,
+                  resourceType: resourceTypeMock3,
                 },
               });
             }}
@@ -28,7 +34,8 @@ export const PolicyEditorStartPage = () => {
             onClick={() => {
               navigate('/policyEditor', {
                 state: {
-                  resourceId: resourceId1,
+                  resourceId: resourceIdMock1,
+                  resourceType: resourceTypeMock1,
                 },
               });
             }}

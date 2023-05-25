@@ -1,18 +1,23 @@
 import { PolicyRuleCardType, PolicyRuleResourceType, PolicyType } from "resourceadm/types/global";
 
 // RESOURCE ID
-export const resourceId1: string = "test_id_1"
-export const resourceId2: string = "test_id_2"
-export const resourceId3: string = "test_id_3"
+export const resourceIdMock1: string = "test_id_1"
+export const resourceIdMock2: string = "test_id_2"
+export const resourceIdMock3: string = "test_id_3"
+
+// RESOURCE TYPE
+export const resourceTypeMock1: string = "urn:altinn:resource1"
+export const resourceTypeMock2: string = "urn:altinn:resource2"
+export const resourceTypeMock3: string = "urn:altinn:resource3"
 
 // RESOURCES
 const resourceMock1: PolicyRuleResourceType = {
-  type: 'test',
-  id: resourceId1
+  type: resourceTypeMock1,
+  id: resourceIdMock1
 }
 const resourceMock2: PolicyRuleResourceType = {
-  type: 'Test Test',
-  id: resourceId2
+  type: resourceTypeMock2,
+  id: resourceIdMock2
 }
 
 // RULES

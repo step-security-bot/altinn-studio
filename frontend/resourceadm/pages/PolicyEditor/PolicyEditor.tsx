@@ -25,6 +25,9 @@ export const PolicyEditor = () => {
 
   // Set the resurceId sent in params or set it to null. If null, display error (TODO)
   const resourceId = state === null ? null : state.resourceId;
+  console.log('resourceId: ' + resourceId);
+  const resourceType = state === null ? null : state.resourceType;
+  console.log('resourceType: ' + resourceType);
 
   const [policyRules, setPolicyRules] = useState<PolicyRuleCardType[]>([]);
 
@@ -51,7 +54,16 @@ export const PolicyEditor = () => {
   ));
 
   const handleAddCardClick = () => {
-    setPolicyRules((v) => [...v, ...[{ ...emptyPolicyRule, RuleId: policyRules.length + 1 }]]);
+    setPolicyRules((v) => [
+      ...v,
+      ...[
+        {
+          ...emptyPolicyRule,
+          RuleId: policyRules.length + 1,
+          Resources: [{ type: resourceType, id: resourceId }],
+        },
+      ],
+    ]);
 
     // Make sure the already open card is closed
   };
@@ -128,8 +140,13 @@ export const PolicyEditor = () => {
         </div>
         <p className={classes.subHeader}>Se eller legg til regler for policyen</p>
         {/*displayRules*/}
-        <ExpandablePolicyCard policyRule={emptyPolicyRule} />
-
+        <ExpandablePolicyCard
+          policyRule={{
+            ...emptyPolicyRule,
+            RuleId: policyRules.length + 1,
+            Resources: [{ type: resourceType, id: resourceId }],
+          }}
+        />
         <div className={classes.space}>
           <CardButton buttonText='Legg til ekstra regelsett' onClick={handleAddCardClick} />
         </div>
