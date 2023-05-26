@@ -24,6 +24,10 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
   const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
   const [ruleDescription, setRuleDescription] = useState('');
 
+  /**
+   * Maps the list of policy subject strings from backend of the format "subjectID:subjectResource"
+   * to the title of the subject.
+   */
   const mapPolicySubjectToSubjectTitle = (policySubjects: string[]): string[] => {
     const subjectIds = policySubjects.map((s) => {
       const splitted = s.split(':');
@@ -36,10 +40,19 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
       }
     });
   };
-
   const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(
     mapPolicySubjectToSubjectTitle(policyRule.Subject)
   );
+
+  /**
+   * Maps the subject objects to option objects for display in the select component
+   */
+  const getSubjectOptions = () => {
+    return subjects
+      .filter((s) => !selectedSubjectTitles.includes(s.SubjectTitle))
+      .map((s) => ({ value: s.SubjectTitle, label: s.SubjectTitle }));
+  };
+  const [subjectOptions, setSubjectOptions] = useState(getSubjectOptions());
 
   /**
    * Gets the id of the policy
@@ -131,7 +144,11 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
     }
   };
 
-  // TODO - When adding the subject, merge it to the string `urn:${subjectsource}:{subjectid}`
+  /**
+   * Displays the selected subjects
+   *
+   * TODO - When adding the subject, merge it to the string `urn:${subjectsource}:{subjectid}`
+   */
   const displaySubjects = selectedSubjectTitles.map((s, i) => {
     return (
       <PolicyRuleSubjectListItem
@@ -141,26 +158,6 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
       />
     );
   });
-
-  /**
-   * Handles the addition of more resources
-   */
-  const handleClickAddSubject = () => {
-    const newResource: PolicyRuleResourceType = {
-      id: '',
-      type: '',
-    };
-
-    setResources([...resources, newResource]);
-  };
-
-  const getSubjectOptions = () => {
-    return subjects
-      .filter((s) => !selectedSubjectTitles.includes(s.SubjectTitle))
-      .map((s) => ({ value: s.SubjectTitle, label: s.SubjectTitle }));
-  };
-
-  const [subjectOptions, setSubjectOptions] = useState(getSubjectOptions());
 
   /**
    * Handles the removal of resources
@@ -175,7 +172,11 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
     setSubjectOptions([...subjectOptions, { value: subjectTitle, label: subjectTitle }]);
   };
 
-  const handleChangeSubject = (option: string[]) => {
+  /**
+   * Handles the click on a subject in the select list. It removes the clicked element
+   * from the options list, and adds it to the selected subject title list.
+   */
+  const handleClickSubjectInList = (option: string[]) => {
     // As the input field is multiple, the onchance function uses string[], but
     // we are removing the element from the options list before it is displayed, so
     // it will only ever be a first value in the array.
@@ -215,7 +216,7 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
       {subjectOptions.length > 0 && (
         <Select
           options={subjectOptions}
-          onChange={handleChangeSubject}
+          onChange={handleClickSubjectInList}
           label='Legg til fler'
           multiple
         />
