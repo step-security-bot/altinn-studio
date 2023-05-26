@@ -3,9 +3,14 @@ import classes from './PolicyEditor.module.css';
 import { ExpandablePolicyCard } from 'resourceadm/components/ExpandablePolicyCard';
 import { CardButton } from 'resourceadm/components/CardButton';
 import { Button } from '@digdir/design-system-react';
-import { PolicyRuleCardType } from 'resourceadm/types/global';
+import { PolicyRuleCardType, PolicySubjectType } from 'resourceadm/types/global';
 import { useLocation } from 'react-router-dom';
-import { actionsListMock, policyMock1, policyMock2 } from 'resourceadm/data-mocks/policies';
+import {
+  actionsListMock,
+  policyMock1,
+  policyMock2,
+  subjectsListMock,
+} from 'resourceadm/data-mocks/policies';
 
 /**
  * Empty rule when new card added
@@ -33,14 +38,18 @@ export const PolicyEditor = () => {
 
   // TODO - replace with list from backend
   const [actions, setActions] = useState<string[]>([]);
+  const [subjects, setSubjects] = useState<PolicySubjectType[]>([]);
 
   // TODO - Make it possible to update values inside the rules tooo
   const [policyRules, setPolicyRules] = useState<PolicyRuleCardType[]>([]);
 
   // TODO - implement useOnce hook to get the policy
   useEffect(() => {
-    // TODO - API Call to get the correct actions
+    // TODO - API Call to get the correct actions, AND TRANSLATE THEM
     setActions(actionsListMock);
+    // TODO - API Call to get the correct subjects
+    setSubjects(subjectsListMock);
+
     // TODO - API Call to get policy by the resource ID
     setPolicyRules(resourceId === 'test_id_1' ? policyMock1.Rules : policyMock2.Rules);
   }, [resourceId]);
@@ -48,7 +57,7 @@ export const PolicyEditor = () => {
   // Displays all the rule cards
   const displayRules = policyRules.map((pr, i) => (
     <div className={classes.space} key={i}>
-      <ExpandablePolicyCard policyRule={pr} actions={actions} />
+      <ExpandablePolicyCard policyRule={pr} actions={actions} subjects={subjects} />
     </div>
   ));
 

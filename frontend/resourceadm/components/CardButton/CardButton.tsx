@@ -12,12 +12,14 @@ interface Props {
  *
  * @param props.buttonText text to display on the button
  * @param props.onClick function for handling the button click
+ *
+ * TODO - Translate
  */
 export const CardButton = ({ buttonText, onClick }: Props) => {
   return (
     <button className={classes.button} type='button' onClick={onClick}>
       <p className={classes.buttonText}>{buttonText}</p>
-      <PlusIcon title='a11y-title' fontSize='1.4rem' />
+      <PlusIcon title='Add rule' fontSize='1.4rem' />
     </button>
   );
 };

@@ -1,22 +1,45 @@
 import React, { useState } from 'react';
-import { Button, TextArea } from '@digdir/design-system-react';
+import { Button, Select, TextArea } from '@digdir/design-system-react';
 import { Chip } from '../Chip';
 import { ExpandableCard } from '../ExpandableCard';
 import classes from './ExpandablePolicyCard.module.css';
-import { PolicyRuleCardType, PolicyRuleResourceType } from 'resourceadm/types/global';
+import {
+  PolicyRuleCardType,
+  PolicyRuleResourceType,
+  PolicySubjectType,
+} from 'resourceadm/types/global';
 import { PolicyResourceFields } from '../PolicyResourceFields';
+import { PolicyRuleSubjectListItem } from '../PolicyRuleSubjectListItem';
 
 interface Props {
   policyRule: PolicyRuleCardType;
   actions: string[];
+  subjects: PolicySubjectType[];
 }
 
 // TODO - Make it possible to delete a rule too
-export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
+export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) => {
   // TODO - make it controllable by parent
   const [resources, setResources] = useState(policyRule.Resources);
   const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
   const [ruleDescription, setRuleDescription] = useState('');
+
+  const mapPolicySubjectToSubjectTitle = (policySubjects: string[]): string[] => {
+    const subjectIds = policySubjects.map((s) => {
+      const splitted = s.split(':');
+      return splitted[splitted.length - 1];
+    });
+
+    return subjectIds.map((subjectId) => {
+      if (subjects.map((s) => s.SubjectId).includes(subjectId)) {
+        return subjects.find((s) => s.SubjectId === subjectId).SubjectTitle;
+      }
+    });
+  };
+
+  const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(
+    mapPolicySubjectToSubjectTitle(policyRule.Subject)
+  );
 
   /**
    * Gets the id of the policy
@@ -36,8 +59,8 @@ export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
         onRemove={() => handleRemoveResource(i)}
         valueId={r.id}
         valueType={r.type}
-        onChangeId={(s: string) => handleInputInputChange(i, 'id', s)}
-        onChangeType={(s: string) => handleInputInputChange(i, 'type', s)}
+        onChangeId={(s: string) => handleInputChange(i, 'id', s)}
+        onChangeType={(s: string) => handleInputChange(i, 'type', s)}
       />
     );
   });
@@ -45,7 +68,7 @@ export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
   /**
    * Handles the changes in the input fields
    */
-  const handleInputInputChange = (index: number, field: 'id' | 'type', value: string) => {
+  const handleInputChange = (index: number, field: 'id' | 'type', value: string) => {
     const updatedResources = [...resources];
     updatedResources[index] = {
       ...updatedResources[index],
@@ -108,6 +131,66 @@ export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
     }
   };
 
+  // TODO - When adding the subject, merge it to the string `urn:${subjectsource}:{subjectid}`
+  const displaySubjects = selectedSubjectTitles.map((s, i) => {
+    return (
+      <PolicyRuleSubjectListItem
+        key={i}
+        subjectTitle={s}
+        onRemove={() => handleRemoveSubject(i, s)}
+      />
+    );
+  });
+
+  /**
+   * Handles the addition of more resources
+   */
+  const handleClickAddSubject = () => {
+    const newResource: PolicyRuleResourceType = {
+      id: '',
+      type: '',
+    };
+
+    setResources([...resources, newResource]);
+  };
+
+  const getSubjectOptions = () => {
+    return subjects
+      .filter((s) => !selectedSubjectTitles.includes(s.SubjectTitle))
+      .map((s) => ({ value: s.SubjectTitle, label: s.SubjectTitle }));
+  };
+
+  const [subjectOptions, setSubjectOptions] = useState(getSubjectOptions());
+
+  /**
+   * Handles the removal of resources
+   */
+  const handleRemoveSubject = (index: number, subjectTitle: string) => {
+    // Remove from selected list
+    const updatedSubjects = [...selectedSubjectTitles];
+    updatedSubjects.splice(index, 1);
+    setSelectedSubjectTitles(updatedSubjects);
+
+    // Add to options list
+    setSubjectOptions([...subjectOptions, { value: subjectTitle, label: subjectTitle }]);
+  };
+
+  const handleChangeSubject = (option: string[]) => {
+    // As the input field is multiple, the onchance function uses string[], but
+    // we are removing the element from the options list before it is displayed, so
+    // it will only ever be a first value in the array.
+    const clickedOption = option[0];
+
+    // Remove from options list
+    const index = subjectOptions.findIndex((o) => o.value === clickedOption);
+    const updatedOptions = [...subjectOptions];
+    updatedOptions.splice(index, 1);
+    setSubjectOptions(updatedOptions);
+
+    // Add to selected list
+    setSelectedSubjectTitles([...selectedSubjectTitles, clickedOption]);
+  };
+
   return (
     <ExpandableCard cardTitle={`Regel ${getPolicyRuleId()}`}>
       {/*<p className={classes.subHeader}>Hvilket nivå i ressursen skal reglene gjelde?</p>
@@ -122,13 +205,21 @@ export const ExpandablePolicyCard = ({ policyRule, actions }: Props) => {
       <p className={classes.subHeader}>Hvilken ressurser skal regelen gjelde for?</p>
       {displayResources}
       <Button type='button' onClick={handleClickAddResource}>
-        Legg til ressurs
+        Legg til en ressurs for å limitere ressursen {/* TODO - Komme med bedre navn*/}
       </Button>
       <p className={classes.subHeader}>Hvilke rettigheter skal gis?</p>
       <p className={classes.smallText}>Velg minimum ett alternativ fra listen under</p>
       <div className={classes.chipWrapper}>{displayActions}</div>
       <p className={classes.subHeader}>Hvem skal ha disse rettighetene?</p>
-      <p>TODO</p>
+      {displaySubjects}
+      {subjectOptions.length > 0 && (
+        <Select
+          options={subjectOptions}
+          onChange={handleChangeSubject}
+          label='Legg til fler'
+          multiple
+        />
+      )}
       {/*<p className={classes.subHeader}>Hvorfor har du tatt disse valgene?</p>
       <p className={classes.text}>Beskriv grunnlaget for hvorfor disse rettighetene gis</p>
       <div className={classes.textAreaWrapper}>

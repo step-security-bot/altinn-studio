@@ -7,6 +7,7 @@ interface Props {
   children: ReactNode;
 }
 
+// TODO - translate
 export const ExpandableCard = ({ cardTitle, children }: Props) => {
   const [isOpen, setIsOpen] = useState(true);
 
@@ -15,9 +16,9 @@ export const ExpandableCard = ({ cardTitle, children }: Props) => {
       <button className={classes.expandButton} onClick={() => setIsOpen((v) => !v)}>
         <p className={classes.title}>{cardTitle}</p>
         {isOpen ? (
-          <ChevronUpIcon title='a11y-title' fontSize='1.8rem' />
+          <ChevronUpIcon title='Close the card' fontSize='1.8rem' />
         ) : (
-          <ChevronDownIcon title='a11y-title' fontSize='1.8rem' />
+          <ChevronDownIcon title='Open the card' fontSize='1.8rem' />
         )}
       </button>
       {isOpen && <div className={classes.bottomWrapper}>{children}</div>}

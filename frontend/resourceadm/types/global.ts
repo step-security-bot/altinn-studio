@@ -14,3 +14,10 @@ export interface PolicyRuleResourceType {
   type: string;
   id: string;
 }
+
+export interface PolicySubjectType {
+  SubjectId: string;
+  SubjectSource: string;
+  SubjectTitle: string;
+  SubjectDescription: string;
+}
