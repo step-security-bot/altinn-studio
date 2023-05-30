@@ -55,9 +55,10 @@ export const PolicyResourceFields = ({
       <div>
         <Button
           variant='quiet'
-          icon={<MultiplyIcon title='Fjern ressursen' />} // TODO - any specific color??
+          icon={<MultiplyIcon title='Fjern ressursen' />}
           disabled={!isEditable}
           onClick={onRemove}
+          color='danger'
         />
       </div>
     </div>

@@ -20,12 +20,16 @@ const resourceMock2: PolicyRuleResourceType = {
   id: resourceIdMock2
 }
 
+// SUBJECT STRINGS FROM BACKEND
+export const subjectStringBackendMock1: string = 'urn:altinn:rolecode:dagl'
+export const subjectStringBackendMock3: string = 'urn:altinn:rolecode:dagl3'
+
 // RULES
 const ruleMock1: PolicyRuleBackendType = {
   RuleId: `${resourceTypeMock1}:${resourceIdMock1}:ruleid:1`,
   Resources: [`${resourceMock1.type}:${resourceMock1.id}`, `${resourceMock2.type}:${resourceMock2.id}`],
   Actions: ['read', 'write'],
-  Subject: ['urn:altinn:rolecode:dagl', 'urn:altinn:rolecode:dagl3'],
+  Subject: [subjectStringBackendMock1, subjectStringBackendMock3],
   Description: 'Dette er en forklaring på hva regelen er.'
 }
 
@@ -48,7 +52,7 @@ export const actionsListMock: string[] = [
 ]
 
 // SUBJECTS
-const subjectMock1: PolicySubjectType = {
+export const subjectMock1: PolicySubjectType = {
   SubjectId: "dagl",
   SubjectSource: "altinn:role",
   SubjectTitle: "Daglig leder",
