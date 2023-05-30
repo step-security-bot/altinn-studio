@@ -22,13 +22,12 @@ export interface PolicySubjectType {
   SubjectDescription: string;
 }
 
-
 export interface PolicyRuleBackendType {
   RuleId: string,
   Description: string,
   Subject: string[],
   Actions: string[],
-  Resources: string[]
+  Resources: string[] // TODO - Find out about array in array
 }
 export interface PolicyEditorSendType {
   Rules: PolicyRuleBackendType[]

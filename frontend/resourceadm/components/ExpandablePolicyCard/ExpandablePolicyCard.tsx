@@ -21,6 +21,17 @@ interface Props {
 }
 
 // TODO - Make it possible to delete a rule too
+/**
+ * Component that displays a card where a user can view and update a policy rule
+ * for a resource.
+ *
+ * @param props.policyRule the rule to display in the card
+ * @param props.actions the possible actions to select from
+ * @param props.subjects the possible subjects to select from
+ * @param props.rules the list of all the rules
+ * @param props.setPolicyRules useState function to update the list of rules
+ * @param props.rulePosition the position of the rule in the rule array
+ */
 export const ExpandablePolicyCard = ({
   policyRule,
   actions,
@@ -33,7 +44,18 @@ export const ExpandablePolicyCard = ({
   const [resources, setResources] = useState(policyRule.Resources);
   const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
   const [ruleDescription, setRuleDescription] = useState(policyRule.Description);
+  const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(policyRule.Subject);
 
+  /**
+   * Function to update the fields inside the rule object in the rule array.
+   * This function has to be called every time an element inside the card is
+   * changing so that the parent component knows that the child element is changed.
+   *
+   * @param d the description
+   * @param s the selected subjectTitle array
+   * @param a the selected actions array
+   * @param r the selected resources array
+   */
   const updateRules = (d: string, s: string[], a: string[], r: PolicyRuleResourceType[]) => {
     const updatedRules = [...rules];
     updatedRules[rulePosition] = {
@@ -44,17 +66,7 @@ export const ExpandablePolicyCard = ({
       Resources: r,
     };
     setPolicyRules(updatedRules);
-
-    /*
-const updatedResources = [...resources];
-    updatedResources[index] = {
-      ...updatedResources[index],
-      [field]: value,
-    };
-    */
   };
-
-  const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(policyRule.Subject);
 
   /**
    * Maps the subject objects to option objects for display in the select component
