@@ -40,7 +40,6 @@ export const ExpandablePolicyCard = ({
   setPolicyRules,
   rulePosition,
 }: Props) => {
-  // TODO - make it controllable by parent
   const [resources, setResources] = useState(policyRule.Resources);
   const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
   const [ruleDescription, setRuleDescription] = useState(policyRule.Description);
@@ -176,8 +175,6 @@ export const ExpandablePolicyCard = ({
 
   /**
    * Displays the selected subjects
-   *
-   * TODO - When adding the subject, merge it to the string `urn:${subjectsource}:{subjectid}`
    */
   const displaySubjects = selectedSubjectTitles.map((s, i) => {
     return (
@@ -199,7 +196,7 @@ export const ExpandablePolicyCard = ({
     setSelectedSubjectTitles(updatedSubjects);
 
     // Add to options list
-    setSubjectOptions([...subjectOptions, { value: subjectTitle, label: subjectTitle }]); // -----------------------
+    setSubjectOptions([...subjectOptions, { value: subjectTitle, label: subjectTitle }]);
 
     updateRules(ruleDescription, updatedSubjects, selectedActions, resources);
   };
@@ -231,6 +228,9 @@ export const ExpandablePolicyCard = ({
     );
   };
 
+  /**
+   * Updates the description of the rule
+   */
   const handleChangeDescription = (description: string) => {
     setRuleDescription(description);
     updateRules(description, selectedSubjectTitles, selectedActions, resources);

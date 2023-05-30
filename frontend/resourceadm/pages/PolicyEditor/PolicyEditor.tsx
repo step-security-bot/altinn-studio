@@ -27,7 +27,6 @@ import {
  */
 export const PolicyEditor = () => {
   // TODO - translation
-  // TODO - Make this component able to manage and control the values inside the cards
 
   const { state } = useLocation();
 
@@ -38,8 +37,6 @@ export const PolicyEditor = () => {
   // TODO - replace with list from backend
   const [actions, setActions] = useState<string[]>([]);
   const [subjects, setSubjects] = useState<PolicySubjectType[]>([]);
-
-  // TODO - Make it possible to update values inside the rules tooo
   const [policyRules, setPolicyRules] = useState<PolicyRuleCardType[]>([]);
 
   // TODO - implement useOnce hook to get the policy
@@ -104,7 +101,6 @@ export const PolicyEditor = () => {
     };
 
     // TODO - Error handling
-
     console.log('Object to be sent as JSON object: \n', JSON.stringify(resourceWithRules, null, 2));
   };
 
