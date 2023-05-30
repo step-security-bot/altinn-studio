@@ -3,7 +3,7 @@ export interface PolicyType {
 }
 
 export interface PolicyRuleCardType {
-  RuleId: number;
+  RuleId: string;
   Description: string;
   Subject: string[];
   Actions: string[];
@@ -23,7 +23,7 @@ export interface PolicySubjectType {
 }
 
 
-export interface PolicyRuleSendType {
+export interface PolicyRuleBackendType {
   RuleId: string,
   Description: string,
   Subject: string[],
@@ -31,5 +31,5 @@ export interface PolicyRuleSendType {
   Resources: string[]
 }
 export interface PolicyEditorSendType {
-  Rules: PolicyRuleSendType[]
+  Rules: PolicyRuleBackendType[]
 }

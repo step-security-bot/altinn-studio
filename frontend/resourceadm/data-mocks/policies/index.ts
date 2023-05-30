@@ -1,4 +1,4 @@
-import { PolicyRuleCardType, PolicyRuleResourceType, PolicySubjectType, PolicyType } from "resourceadm/types/global";
+import { PolicyEditorSendType, PolicyRuleBackendType, PolicyRuleResourceType, PolicySubjectType } from "resourceadm/types/global";
 
 // RESOURCE ID
 export const resourceIdMock1: string = "test_id_1"
@@ -21,20 +21,20 @@ const resourceMock2: PolicyRuleResourceType = {
 }
 
 // RULES
-const ruleMock1: PolicyRuleCardType = {
-  RuleId: 1,
-  Resources: [resourceMock1, resourceMock2],
+const ruleMock1: PolicyRuleBackendType = {
+  RuleId: `${resourceTypeMock1}:${resourceIdMock1}:ruleid:1`,
+  Resources: [`${resourceMock1.type}:${resourceMock1.id}`, `${resourceMock2.type}:${resourceMock2.id}`],
   Actions: ['read', 'write'],
   Subject: ['urn:altinn:rolecode:dagl', 'urn:altinn:rolecode:dagl3'],
   Description: 'Dette er en forklaring på hva regelen er.'
 }
 
 // POLICIES
-export const policyMock1: PolicyType = {
+export const policyMock1: PolicyEditorSendType = {
   Rules: [ruleMock1]
 };
 
-export const policyMock2: PolicyType = {
+export const policyMock2: PolicyEditorSendType = {
   Rules: []
 };
 

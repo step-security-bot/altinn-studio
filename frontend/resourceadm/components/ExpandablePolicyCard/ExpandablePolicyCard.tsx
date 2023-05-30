@@ -54,25 +54,7 @@ const updatedResources = [...resources];
     */
   };
 
-  /**
-   * Maps the list of policy subject strings from backend of the format "subjectID:subjectResource"
-   * to the title of the subject.
-   */
-  const mapPolicySubjectToSubjectTitle = (policySubjects: string[]): string[] => {
-    const subjectIds = policySubjects.map((s) => {
-      const splitted = s.split(':');
-      return splitted[splitted.length - 1];
-    });
-
-    return subjectIds.map((subjectId) => {
-      if (subjects.map((s) => s.SubjectId).includes(subjectId)) {
-        return subjects.find((s) => s.SubjectId === subjectId).SubjectTitle;
-      }
-    });
-  };
-  const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(
-    mapPolicySubjectToSubjectTitle(policyRule.Subject)
-  );
+  const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(policyRule.Subject);
 
   /**
    * Maps the subject objects to option objects for display in the select component

@@ -6,7 +6,7 @@ import { Button } from '@digdir/design-system-react';
 import {
   PolicyEditorSendType,
   PolicyRuleCardType,
-  PolicyRuleSendType,
+  PolicyRuleBackendType,
   PolicySubjectType,
 } from 'resourceadm/types/global';
 import { useLocation } from 'react-router-dom';
@@ -16,17 +16,11 @@ import {
   policyMock2,
   subjectsListMock,
 } from 'resourceadm/data-mocks/policies';
-
-/**
- * Empty rule when new card added
- */
-const emptyPolicyRule: PolicyRuleCardType = {
-  RuleId: 0,
-  Resources: [],
-  Actions: [],
-  Subject: [],
-  Description: '',
-};
+import {
+  mapPolicyRulesBackendObjectToPolicyRuleCardType,
+  emptyPolicyRule,
+  mapPolicyRuleToPolicyRuleBackendObject,
+} from 'resourceadm/utils/policyEditorUtils';
 
 /**
  * Displays the content where a user can add and edit a policy
@@ -57,7 +51,12 @@ export const PolicyEditor = () => {
 
     // TODO - API Call to get policy by the resource ID
     // TODO - Find out what the object sent from backend looks like
-    setPolicyRules(resourceId === 'test_id_1' ? policyMock1.Rules : policyMock2.Rules);
+    setPolicyRules(
+      mapPolicyRulesBackendObjectToPolicyRuleCardType(
+        subjectsListMock,
+        resourceId === 'test_id_1' ? policyMock1.Rules : policyMock2.Rules
+      )
+    );
   }, [resourceId]);
 
   // Displays all the rule cards
@@ -83,7 +82,7 @@ export const PolicyEditor = () => {
       ...[
         {
           ...emptyPolicyRule,
-          RuleId: policyRules.length + 1,
+          RuleId: (policyRules.length + 1).toString(),
           Resources: [{ type: resourceType, id: resourceId }],
         },
       ],
@@ -92,35 +91,15 @@ export const PolicyEditor = () => {
     // Make sure the already open card is closed
   };
 
-  const mapSubjectTitleToSubjectString = (subjectTitle: string): string => {
-    const subject: PolicySubjectType = subjects.find((s) => s.SubjectTitle === subjectTitle);
-    return `urn:${subject.SubjectSource}:${subject.SubjectId}`;
-  };
-
-  const mapPolicyRuleObjectToPolicyRuleObject = (pr: PolicyRuleCardType): PolicyRuleSendType => {
-    const resources: string[] = pr.Resources.map((r) => `${r.type}:${r.id}`);
-
-    const subject: string[] = pr.Subject.map((s) => mapSubjectTitleToSubjectString(s));
-
-    return {
-      RuleId: `${resourceType}:${resourceId}:ruleid:${pr.RuleId}`,
-      Description: pr.Description,
-      Subject: subject,
-      Actions: pr.Actions,
-      Resources: resources,
-    };
-  };
-
   const handleSavePolicy = () => {
-    const policyEditorRules: PolicyRuleSendType[] = policyRules.map((pr) =>
-      mapPolicyRuleObjectToPolicyRuleObject(pr)
+    const policyEditorRules: PolicyRuleBackendType[] = policyRules.map((pr) =>
+      mapPolicyRuleToPolicyRuleBackendObject(subjects, pr, resourceType, resourceId)
     );
 
     const resourceWithRules: PolicyEditorSendType = {
       Rules: policyEditorRules,
     };
 
-    console.log('Object to be sent: ', resourceWithRules);
     console.log('Object to be sent as JSON object: \n', JSON.stringify(resourceWithRules, null, 2));
   };
 
