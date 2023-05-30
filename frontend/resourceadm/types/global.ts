@@ -21,3 +21,15 @@ export interface PolicySubjectType {
   SubjectTitle: string;
   SubjectDescription: string;
 }
+
+
+export interface PolicyRuleSendType {
+  RuleId: string,
+  Description: string,
+  Subject: string[],
+  Actions: string[],
+  Resources: string[]
+}
+export interface PolicyEditorSendType {
+  Rules: PolicyRuleSendType[]
+}

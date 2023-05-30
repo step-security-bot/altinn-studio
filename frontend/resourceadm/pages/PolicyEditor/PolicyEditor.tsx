@@ -3,7 +3,12 @@ import classes from './PolicyEditor.module.css';
 import { ExpandablePolicyCard } from 'resourceadm/components/ExpandablePolicyCard';
 import { CardButton } from 'resourceadm/components/CardButton';
 import { Button } from '@digdir/design-system-react';
-import { PolicyRuleCardType, PolicySubjectType } from 'resourceadm/types/global';
+import {
+  PolicyEditorSendType,
+  PolicyRuleCardType,
+  PolicyRuleSendType,
+  PolicySubjectType,
+} from 'resourceadm/types/global';
 import { useLocation } from 'react-router-dom';
 import {
   actionsListMock,
@@ -51,13 +56,21 @@ export const PolicyEditor = () => {
     setSubjects(subjectsListMock);
 
     // TODO - API Call to get policy by the resource ID
+    // TODO - Find out what the object sent from backend looks like
     setPolicyRules(resourceId === 'test_id_1' ? policyMock1.Rules : policyMock2.Rules);
   }, [resourceId]);
 
   // Displays all the rule cards
   const displayRules = policyRules.map((pr, i) => (
     <div className={classes.space} key={i}>
-      <ExpandablePolicyCard policyRule={pr} actions={actions} subjects={subjects} />
+      <ExpandablePolicyCard
+        policyRule={pr}
+        actions={actions}
+        subjects={subjects}
+        rules={policyRules}
+        setPolicyRules={setPolicyRules}
+        rulePosition={i}
+      />
     </div>
   ));
 
@@ -77,6 +90,38 @@ export const PolicyEditor = () => {
     ]);
 
     // Make sure the already open card is closed
+  };
+
+  const mapSubjectTitleToSubjectString = (subjectTitle: string): string => {
+    const subject: PolicySubjectType = subjects.find((s) => s.SubjectTitle === subjectTitle);
+    return `urn:${subject.SubjectSource}:${subject.SubjectId}`;
+  };
+
+  const mapPolicyRuleObjectToPolicyRuleObject = (pr: PolicyRuleCardType): PolicyRuleSendType => {
+    const resources: string[] = pr.Resources.map((r) => `${r.type}:${r.id}`);
+
+    const subject: string[] = pr.Subject.map((s) => mapSubjectTitleToSubjectString(s));
+
+    return {
+      RuleId: `${resourceType}:${resourceId}:ruleid:${pr.RuleId}`,
+      Description: pr.Description,
+      Subject: subject,
+      Actions: pr.Actions,
+      Resources: resources,
+    };
+  };
+
+  const handleSavePolicy = () => {
+    const policyEditorRules: PolicyRuleSendType[] = policyRules.map((pr) =>
+      mapPolicyRuleObjectToPolicyRuleObject(pr)
+    );
+
+    const resourceWithRules: PolicyEditorSendType = {
+      Rules: policyEditorRules,
+    };
+
+    console.log('Object to be sent: ', resourceWithRules);
+    console.log('Object to be sent as JSON object: \n', JSON.stringify(resourceWithRules, null, 2));
   };
 
   return (
@@ -164,7 +209,7 @@ export const PolicyEditor = () => {
         <Button
           type='button'
           onClick={() => {
-            console.log('policyRules', policyRules);
+            handleSavePolicy();
             // alert('todo - save');
           }}
         >

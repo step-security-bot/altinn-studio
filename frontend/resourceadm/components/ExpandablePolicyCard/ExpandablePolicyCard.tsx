@@ -15,14 +15,44 @@ interface Props {
   policyRule: PolicyRuleCardType;
   actions: string[];
   subjects: PolicySubjectType[];
+  rules: PolicyRuleCardType[];
+  setPolicyRules: React.Dispatch<React.SetStateAction<PolicyRuleCardType[]>>;
+  rulePosition: number;
 }
 
 // TODO - Make it possible to delete a rule too
-export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) => {
+export const ExpandablePolicyCard = ({
+  policyRule,
+  actions,
+  subjects,
+  rules,
+  setPolicyRules,
+  rulePosition,
+}: Props) => {
   // TODO - make it controllable by parent
   const [resources, setResources] = useState(policyRule.Resources);
   const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
-  const [ruleDescription, setRuleDescription] = useState('');
+  const [ruleDescription, setRuleDescription] = useState(policyRule.Description);
+
+  const updateRules = (d: string, s: string[], a: string[], r: PolicyRuleResourceType[]) => {
+    const updatedRules = [...rules];
+    updatedRules[rulePosition] = {
+      ...updatedRules[rulePosition],
+      Description: d,
+      Subject: s,
+      Actions: a,
+      Resources: r,
+    };
+    setPolicyRules(updatedRules);
+
+    /*
+const updatedResources = [...resources];
+    updatedResources[index] = {
+      ...updatedResources[index],
+      [field]: value,
+    };
+    */
+  };
 
   /**
    * Maps the list of policy subject strings from backend of the format "subjectID:subjectResource"
@@ -87,7 +117,10 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
       ...updatedResources[index],
       [field]: value,
     };
+
     setResources(updatedResources);
+
+    updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
   };
 
   /**
@@ -95,8 +128,8 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
    */
   const handleClickAddResource = () => {
     const newResource: PolicyRuleResourceType = {
-      id: '',
       type: '',
+      id: '',
     };
 
     setResources([...resources, newResource]);
@@ -109,6 +142,7 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
     const updatedResources = [...resources];
     updatedResources.splice(index, 1);
     setResources(updatedResources);
+    updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
   };
 
   /**
@@ -135,12 +169,14 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
       const selectedActionIndex = selectedActions.findIndex((a) => a === action);
       updatedSelectedActions.splice(selectedActionIndex, 1);
       setSelectedActions(updatedSelectedActions);
+      updateRules(ruleDescription, selectedSubjectTitles, updatedSelectedActions, resources);
     }
     // else add it
     else {
       const updatedSelectedActions = [...selectedActions];
       updatedSelectedActions.push(action);
       setSelectedActions(updatedSelectedActions);
+      updateRules(ruleDescription, selectedSubjectTitles, updatedSelectedActions, resources);
     }
   };
 
@@ -169,7 +205,9 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
     setSelectedSubjectTitles(updatedSubjects);
 
     // Add to options list
-    setSubjectOptions([...subjectOptions, { value: subjectTitle, label: subjectTitle }]);
+    setSubjectOptions([...subjectOptions, { value: subjectTitle, label: subjectTitle }]); // -----------------------
+
+    updateRules(ruleDescription, updatedSubjects, selectedActions, resources);
   };
 
   /**
@@ -190,19 +228,22 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
 
     // Add to selected list
     setSelectedSubjectTitles([...selectedSubjectTitles, clickedOption]);
+
+    updateRules(
+      ruleDescription,
+      [...selectedSubjectTitles, clickedOption],
+      selectedActions,
+      resources
+    );
+  };
+
+  const handleChangeDescription = (description: string) => {
+    setRuleDescription(description);
+    updateRules(description, selectedSubjectTitles, selectedActions, resources);
   };
 
   return (
     <ExpandableCard cardTitle={`Regel ${getPolicyRuleId()}`}>
-      {/*<p className={classes.subHeader}>Hvilket nivå i ressursen skal reglene gjelde?</p>
-     <Select
-        options={[
-          { value: 'Hele ressursen', label: 'Hele ressursen' },
-          { value: 'Halve ressursen', label: 'Halve ressursen' },
-          { value: '1 ressurs', label: '1 ressurs' },
-        ]}
-        multiple
-      />*/}
       <p className={classes.subHeader}>Hvilken ressurser skal regelen gjelde for?</p>
       {displayResources}
       <Button type='button' onClick={handleClickAddResource}>
@@ -221,23 +262,14 @@ export const ExpandablePolicyCard = ({ policyRule, actions, subjects }: Props) =
           multiple
         />
       )}
-      {/*<p className={classes.subHeader}>Hvorfor har du tatt disse valgene?</p>
-      <p className={classes.text}>Beskriv grunnlaget for hvorfor disse rettighetene gis</p>
-      <div className={classes.textAreaWrapper}>
-        <TextArea
-          resize='vertical'
-          placeholder='Grunnlag beskrevet her i tekst av tjenesteeier'
-          value={reasonText}
-          onChange={(e) => setReasonText(e.currentTarget.value)}
-        />
-    </div>*/}
       <p className={classes.subHeader}>Legg til en beskrivelse av regelen</p>
       <div className={classes.textAreaWrapper}>
         <TextArea
           resize='vertical'
           placeholder='Beskrivelse beskrevet her i tekst av tjenesteeier'
           value={ruleDescription}
-          onChange={(e) => setRuleDescription(e.currentTarget.value)}
+          onChange={(e) => handleChangeDescription(e.currentTarget.value)}
+          rows={5}
         />
       </div>
     </ExpandableCard>
