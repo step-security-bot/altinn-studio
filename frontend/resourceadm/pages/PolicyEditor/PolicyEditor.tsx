@@ -68,6 +68,8 @@ export const PolicyEditor = () => {
         rules={policyRules}
         setPolicyRules={setPolicyRules}
         rulePosition={i}
+        resourceId={resourceId}
+        resourceType={resourceType}
       />
     </div>
   ));
@@ -82,7 +84,7 @@ export const PolicyEditor = () => {
         {
           ...emptyPolicyRule,
           RuleId: (policyRules.length + 1).toString(),
-          Resources: [{ type: resourceType, id: resourceId }],
+          Resources: [[{ type: resourceType, id: resourceId }]],
         },
       ],
     ]);

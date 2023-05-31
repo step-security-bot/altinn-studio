@@ -79,7 +79,7 @@ export const mapPolicyRulesBackendObjectToPolicyRuleCardType = (
     const id = idArr[idArr.length - 1];
 
     const mappedResources = r.Resources.map((resource) =>
-      mapResourceFromBackendToResourceType(resource)
+      resource.map(r => mapResourceFromBackendToResourceType(r))
     );
 
     return {
@@ -126,7 +126,7 @@ export const mapPolicyRuleToPolicyRuleBackendObject = (
   resourceType: string,
   resourceId: string
 ): PolicyRuleBackendType => {
-  const resources: string[] = policyRule.Resources.map((r) => `${r.type}:${r.id}`);
+  const resources: string[][] = policyRule.Resources.map((resource) => resource.map(r => `${r.type}:${r.id}`));
   const subject: string[] = policyRule.Subject.map((s) => mapSubjectTitleToSubjectString(subjectOptions, s));
 
   return {

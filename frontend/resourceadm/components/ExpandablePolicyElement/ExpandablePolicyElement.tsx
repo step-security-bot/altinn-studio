@@ -8,7 +8,14 @@ interface Props {
   isCard?: boolean;
 }
 
-// TODO - translate
+/**
+ * Displays a wrapper component that can be expanded and collapsed. The wrapper
+ * component is wrapped around the content that can be collapsed.
+ *
+ * @param props.title the title to display on the element.
+ * @param props.children the React childrens to display inside it.
+ * @param props.isCard optional for if the component is a card or an element
+ */
 export const ExpandablePolicyElement = ({ title: cardTitle, children, isCard = true }: Props) => {
   const [isOpen, setIsOpen] = useState(true);
 

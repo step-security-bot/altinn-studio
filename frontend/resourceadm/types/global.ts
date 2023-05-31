@@ -7,7 +7,7 @@ export interface PolicyRuleCardType {
   Description: string;
   Subject: string[];
   Actions: string[];
-  Resources: PolicyRuleResourceType[];
+  Resources: PolicyRuleResourceType[][];
 }
 
 export interface PolicyRuleResourceType {
@@ -27,8 +27,9 @@ export interface PolicyRuleBackendType {
   Description: string,
   Subject: string[],
   Actions: string[],
-  Resources: string[] // TODO - Find out about array in array
+  Resources: string[][]
 }
+
 export interface PolicyEditorSendType {
   Rules: PolicyRuleBackendType[]
 }

@@ -8,9 +8,9 @@ import {
   PolicyRuleResourceType,
   PolicySubjectType,
 } from 'resourceadm/types/global';
-import { PolicyResourceFields } from '../PolicyResourceFields';
 import { PolicyRuleSubjectListItem } from '../PolicyRuleSubjectListItem';
 import { PolicySubjectSelectButton } from '../PolicySubjectSelectButton';
+import { ResourceNarrowingList } from '../ResourceNarrowingList';
 
 interface Props {
   policyRule: PolicyRuleCardType;
@@ -19,6 +19,8 @@ interface Props {
   rules: PolicyRuleCardType[];
   setPolicyRules: React.Dispatch<React.SetStateAction<PolicyRuleCardType[]>>;
   rulePosition: number;
+  resourceId: string;
+  resourceType: string;
 }
 
 // TODO - Make it possible to delete a rule too
@@ -32,6 +34,8 @@ interface Props {
  * @param props.rules the list of all the rules
  * @param props.setPolicyRules useState function to update the list of rules
  * @param props.rulePosition the position of the rule in the rule array
+ * @param props.resourceId the ID of the resource
+ * @param props.resourceType the type of the resource
  */
 export const ExpandablePolicyCard = ({
   policyRule,
@@ -40,8 +44,10 @@ export const ExpandablePolicyCard = ({
   rules,
   setPolicyRules,
   rulePosition,
+  resourceId,
+  resourceType,
 }: Props) => {
-  const [resources, setResources] = useState(policyRule.Resources);
+  const [resources, setResources] = useState<PolicyRuleResourceType[][]>(policyRule.Resources);
   const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
   const [ruleDescription, setRuleDescription] = useState(policyRule.Description);
   const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(policyRule.Subject);
@@ -56,7 +62,7 @@ export const ExpandablePolicyCard = ({
    * @param a the selected actions array
    * @param r the selected resources array
    */
-  const updateRules = (d: string, s: string[], a: string[], r: PolicyRuleResourceType[]) => {
+  const updateRules = (d: string, s: string[], a: string[], r: PolicyRuleResourceType[][]) => {
     const updatedRules = [...rules];
     updatedRules[rulePosition] = {
       ...updatedRules[rulePosition],
@@ -86,55 +92,88 @@ export const ExpandablePolicyCard = ({
   };
 
   /**
-   * Displays the list of resources
+   * Handles the changes in the input fields inside the resource blocks
+   *
+   * @param index the index of the element in the resource block
+   * @param field the type of textfield to update
+   * @param value the value types in the textfield
+   * @param resourceIndex the index of the resource block
+   */
+  const handleInputChange = (
+    index: number,
+    field: 'id' | 'type',
+    value: string,
+    resourceIndex: number
+  ) => {
+    const updatedResources = [...resources];
+    updatedResources[resourceIndex][index] = {
+      ...updatedResources[resourceIndex][index],
+      [field]: value,
+    };
+
+    setResources(updatedResources);
+    updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
+  };
+
+  /**
+   * Adds a resource block to the list of resources. The first element in the
+   * resource block is set to the resource's ID and type.
+   */
+  const handleClickAddResource = () => {
+    const newResource: PolicyRuleResourceType[] = [
+      {
+        type: resourceType,
+        id: resourceId,
+      },
+    ];
+
+    const updatedResources = [...resources, newResource];
+    setResources(updatedResources);
+    updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
+  };
+
+  /**
+   * Displays a list of resource blocks, which each contains a list of the resources
+   * and the list narrowing down the elements.
    */
   const displayResources = resources.map((r, i) => {
     return (
-      <PolicyResourceFields
+      <ResourceNarrowingList
         key={i}
-        isEditable={i > 0}
-        onRemove={() => handleRemoveResource(i)}
-        valueId={r.id}
-        valueType={r.type}
-        onChangeId={(s: string) => handleInputChange(i, 'id', s)}
-        onChangeType={(s: string) => handleInputChange(i, 'type', s)}
+        resources={r}
+        handleInputChange={(narrowResourceIndex, field, s) =>
+          handleInputChange(narrowResourceIndex, field, s, i)
+        }
+        handleRemoveResource={(narrowResourceIndex) =>
+          handleRemoveNarrowingResource(narrowResourceIndex, i)
+        }
+        handleClickAddResource={() => handleClickAddResourceNarrowing(i)}
       />
     );
   });
 
   /**
-   * Handles the changes in the input fields
-   */
-  const handleInputChange = (index: number, field: 'id' | 'type', value: string) => {
-    const updatedResources = [...resources];
-    updatedResources[index] = {
-      ...updatedResources[index],
-      [field]: value,
-    };
-
-    setResources(updatedResources);
-
-    updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
-  };
-
-  /**
    * Handles the addition of more resources
    */
-  const handleClickAddResource = () => {
+  const handleClickAddResourceNarrowing = (resourceIndex: number) => {
     const newResource: PolicyRuleResourceType = {
       type: '',
       id: '',
     };
 
-    setResources([...resources, newResource]);
+    setResources(() => {
+      const newElem = [...resources];
+      newElem[resourceIndex].push(newResource);
+      return newElem;
+    });
   };
 
   /**
-   * Handles the removal of resources
+   * Handles the removal of the narrowed resources
    */
-  const handleRemoveResource = (index: number) => {
+  const handleRemoveNarrowingResource = (index: number, resourceIndex: number) => {
     const updatedResources = [...resources];
-    updatedResources.splice(index, 1);
+    updatedResources[resourceIndex].splice(index, 1);
     setResources(updatedResources);
     updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
   };
@@ -198,7 +237,6 @@ export const ExpandablePolicyCard = ({
 
     // Add to options list
     setSubjectOptions([...subjectOptions, { value: subjectTitle, label: subjectTitle }]);
-
     updateRules(ruleDescription, updatedSubjects, selectedActions, resources);
   };
 
@@ -241,18 +279,12 @@ export const ExpandablePolicyCard = ({
   return (
     <ExpandablePolicyElement title={`Regel ${getPolicyRuleId()}`} isCard>
       <p className={classes.subHeader}>Hvilken ressurser skal regelen gjelde for?</p>
-      {/************* MOVE THIS INSIDE THE CARD *****************/}
       {displayResources}
-      <Button type='button' onClick={handleClickAddResource}>
-        Legg til en innsnevring av ressursen {/* TODO - Komme med bedre navn*/}
-      </Button>
-      {/********************************************************/}
-      <ExpandablePolicyElement title='Ressurs: TODO' isCard={false}>
-        {displayResources}
+      <div className={classes.addResourceButton}>
         <Button type='button' onClick={handleClickAddResource}>
-          Legg til en innsnevring av ressursen {/* TODO - Komme med bedre navn*/}
+          Legg til en ressurs
         </Button>
-      </ExpandablePolicyElement>
+      </div>
       <p className={classes.subHeader}>Hvilke rettigheter skal gis?</p>
       <p className={classes.smallText}>Velg minimum ett alternativ fra listen under</p>
       <div className={classes.chipWrapper}>{displayActions}</div>
