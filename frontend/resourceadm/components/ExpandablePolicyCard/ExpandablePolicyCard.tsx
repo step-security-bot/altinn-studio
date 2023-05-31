@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, TextArea } from '@digdir/design-system-react';
 import { Chip } from '../Chip';
-import { ExpandableCard } from '../ExpandableCard';
+import { ExpandablePolicyElement } from '../ExpandablePolicyElement';
 import classes from './ExpandablePolicyCard.module.css';
 import {
   PolicyRuleCardType,
@@ -239,12 +239,20 @@ export const ExpandablePolicyCard = ({
   };
 
   return (
-    <ExpandableCard cardTitle={`Regel ${getPolicyRuleId()}`}>
+    <ExpandablePolicyElement title={`Regel ${getPolicyRuleId()}`} isCard>
       <p className={classes.subHeader}>Hvilken ressurser skal regelen gjelde for?</p>
+      {/************* MOVE THIS INSIDE THE CARD *****************/}
       {displayResources}
       <Button type='button' onClick={handleClickAddResource}>
-        Legg til en ressurs for å limitere ressursen {/* TODO - Komme med bedre navn*/}
+        Legg til en innsnevring av ressursen {/* TODO - Komme med bedre navn*/}
       </Button>
+      {/********************************************************/}
+      <ExpandablePolicyElement title='Ressurs: TODO' isCard={false}>
+        {displayResources}
+        <Button type='button' onClick={handleClickAddResource}>
+          Legg til en innsnevring av ressursen {/* TODO - Komme med bedre navn*/}
+        </Button>
+      </ExpandablePolicyElement>
       <p className={classes.subHeader}>Hvilke rettigheter skal gis?</p>
       <p className={classes.smallText}>Velg minimum ett alternativ fra listen under</p>
       <div className={classes.chipWrapper}>{displayActions}</div>
@@ -263,6 +271,6 @@ export const ExpandablePolicyCard = ({
           rows={5}
         />
       </div>
-    </ExpandableCard>
+    </ExpandablePolicyElement>
   );
 };
