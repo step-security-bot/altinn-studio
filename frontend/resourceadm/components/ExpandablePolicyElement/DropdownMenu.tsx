@@ -114,7 +114,7 @@ export const DropdownMenu = ({
           <button
             className={classes.dropdownDuplicateButton}
             type='button'
-            onClick={handleDelete}
+            onClick={handleDuplicate}
             ref={firstMenuItemRef}
           >
             <TabsIcon title='Dupliser' fontSize='1.3rem' />
@@ -123,7 +123,7 @@ export const DropdownMenu = ({
           <button
             className={classes.dropdownDeleteButton}
             type='button'
-            onClick={handleDuplicate}
+            onClick={handleDelete}
             ref={lastMenuItemRef}
           >
             <TrashIcon title='Slett' fontSize='1.3rem' />

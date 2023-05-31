@@ -7,6 +7,8 @@ interface Props {
   title: string;
   children: ReactNode;
   isCard?: boolean;
+  handleRemoveElement: () => void;
+  handleDuplicateElement: () => void;
 }
 
 /**
@@ -16,22 +18,21 @@ interface Props {
  * @param props.title the title to display on the element.
  * @param props.children the React childrens to display inside it.
  * @param props.isCard optional for if the component is a card or an element
+ * @param props.handleRemoveElement function to be executed when the element is to be removed
+ * @param props.handleDuplicateElement function to be executed when the element is duplicated
  */
-export const ExpandablePolicyElement = ({ title: cardTitle, children, isCard = true }: Props) => {
+export const ExpandablePolicyElement = ({
+  title: cardTitle,
+  children,
+  isCard = true,
+  handleRemoveElement,
+  handleDuplicateElement,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleClickMoreButton = () => {
     setIsDropdownOpen((prev) => !prev);
-    console.log('hei');
-  };
-
-  const handleDelete = () => {
-    // TODO: Handle delete action
-  };
-
-  const handleDuplicate = () => {
-    // TODO: Handle duplicate action
   };
 
   return (
@@ -52,8 +53,8 @@ export const ExpandablePolicyElement = ({ title: cardTitle, children, isCard = t
           isOpen={isDropdownOpen}
           handleClickMoreIcon={handleClickMoreButton}
           handleCloseMenu={() => setIsDropdownOpen(false)}
-          handleDuplicate={handleDuplicate}
-          handleDelete={handleDelete}
+          handleDuplicate={handleDuplicateElement}
+          handleDelete={handleRemoveElement}
         />
       </div>
       {isOpen && (

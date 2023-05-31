@@ -39,6 +39,9 @@ export const PolicyEditor = () => {
   const [subjects, setSubjects] = useState<PolicySubjectType[]>([]);
   const [policyRules, setPolicyRules] = useState<PolicyRuleCardType[]>([]);
 
+  // Handle the new updated IDs of the rules when a rule is deleted / duplicated
+  const [lastRuleId, setLastRuleId] = useState(0);
+
   // TODO - implement useOnce hook to get the policy
   useEffect(() => {
     // TODO - API Call to get the correct actions, AND TRANSLATE THEM
@@ -53,6 +56,11 @@ export const PolicyEditor = () => {
         subjectsListMock,
         resourceId === 'test_id_1' ? policyMock1.Rules : policyMock2.Rules
       )
+    );
+
+    // TODO - replace when found out how to handle the IDs
+    setLastRuleId(
+      resourceId === 'test_id_1' ? policyMock1.Rules.length + 1 : policyMock2.Rules.length + 1
     );
   }, [resourceId]);
 
@@ -70,9 +78,22 @@ export const PolicyEditor = () => {
         rulePosition={i}
         resourceId={resourceId}
         resourceType={resourceType}
+        handleDuplicateRule={() => handleDuplicateRule(i)}
+        handleDeleteRule={() => handleDeleteRule(i)}
       />
     </div>
   ));
+
+  /**
+   * Returns the rule ID to be used on the new element, and
+   * updates the store of the next rule id
+   */
+  const getRuleId = () => {
+    console.log(lastRuleId);
+    const currentRuleId = lastRuleId;
+    setLastRuleId(currentRuleId + 1);
+    return currentRuleId;
+  };
 
   /**
    * Handles adding of more cards
@@ -83,11 +104,35 @@ export const PolicyEditor = () => {
       ...[
         {
           ...emptyPolicyRule,
-          RuleId: (policyRules.length + 1).toString(),
+          RuleId: getRuleId().toString(),
           Resources: [[{ type: resourceType, id: resourceId }]],
         },
       ],
     ]);
+  };
+
+  /**
+   * Duplicates a rule with all the content in it
+   *
+   * @param index the index of the rule to duplicate
+   */
+  const handleDuplicateRule = (index: number) => {
+    const ruleToDuplicate: PolicyRuleCardType = {
+      ...policyRules[index],
+      RuleId: getRuleId().toString(),
+    };
+    setPolicyRules([...policyRules, ruleToDuplicate]);
+  };
+
+  /**
+   * Deletes a rule from the list
+   *
+   * @param index the index of the rule to delete
+   */
+  const handleDeleteRule = (index: number) => {
+    const updatedRules = [...policyRules];
+    updatedRules.splice(index, 1);
+    setPolicyRules(updatedRules);
   };
 
   /**

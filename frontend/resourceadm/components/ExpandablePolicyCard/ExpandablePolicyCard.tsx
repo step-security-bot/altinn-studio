@@ -21,9 +21,10 @@ interface Props {
   rulePosition: number;
   resourceId: string;
   resourceType: string;
+  handleDuplicateRule: () => void;
+  handleDeleteRule: () => void;
 }
 
-// TODO - Make it possible to delete a rule too
 /**
  * Component that displays a card where a user can view and update a policy rule
  * for a resource.
@@ -36,6 +37,8 @@ interface Props {
  * @param props.rulePosition the position of the rule in the rule array
  * @param props.resourceId the ID of the resource
  * @param props.resourceType the type of the resource
+ * @param props.handleDuplicateRule function to be executed when clicking duplicate rule
+ * @param props.handleDeleteRule function to be executed when clicking delete rule
  */
 export const ExpandablePolicyCard = ({
   policyRule,
@@ -46,6 +49,8 @@ export const ExpandablePolicyCard = ({
   rulePosition,
   resourceId,
   resourceType,
+  handleDuplicateRule,
+  handleDeleteRule,
 }: Props) => {
   const [resources, setResources] = useState<PolicyRuleResourceType[][]>(policyRule.Resources);
   const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
@@ -148,6 +153,8 @@ export const ExpandablePolicyCard = ({
           handleRemoveNarrowingResource(narrowResourceIndex, i)
         }
         handleClickAddResource={() => handleClickAddResourceNarrowing(i)}
+        handleDuplicateElement={() => handleDuplicateResourceGroup(i)}
+        handleRemoveElement={() => handleDeleteResourceGroup(i)}
       />
     );
   });
@@ -245,7 +252,6 @@ export const ExpandablePolicyCard = ({
    * from the options list, and adds it to the selected subject title list.
    */
   const handleClickSubjectInList = (option: string) => {
-    console.log(option);
     // As the input field is multiple, the onchance function uses string[], but
     // we are removing the element from the options list before it is displayed, so
     // it will only ever be a first value in the array.
@@ -257,15 +263,11 @@ export const ExpandablePolicyCard = ({
     updatedOptions.splice(index, 1);
     setSubjectOptions(updatedOptions);
 
+    const updatedSubjectTitles = [...selectedSubjectTitles, clickedOption];
     // Add to selected list
-    setSelectedSubjectTitles([...selectedSubjectTitles, clickedOption]);
+    setSelectedSubjectTitles(updatedSubjectTitles);
 
-    updateRules(
-      ruleDescription,
-      [...selectedSubjectTitles, clickedOption],
-      selectedActions,
-      resources
-    );
+    updateRules(ruleDescription, updatedSubjectTitles, selectedActions, resources);
   };
 
   /**
@@ -276,8 +278,37 @@ export const ExpandablePolicyCard = ({
     updateRules(description, selectedSubjectTitles, selectedActions, resources);
   };
 
+  /**
+   * Duplicates a resource group and all the content in it.
+   *
+   * @param resourceIndex the index of the resource group to duplicate
+   */
+  const handleDuplicateResourceGroup = (resourceIndex: number) => {
+    const resourceGroupToDuplicate: PolicyRuleResourceType[] = resources[resourceIndex];
+    const updatedResources = [...resources, resourceGroupToDuplicate];
+    setResources(updatedResources);
+    updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
+  };
+
+  /**
+   * Removes a resource group and all the content in it.
+   *
+   * @param resourceIndex the index of the resource group to remove
+   */
+  const handleDeleteResourceGroup = (resourceIndex: number) => {
+    const updatedResources = [...resources];
+    updatedResources.splice(resourceIndex, 1);
+    setResources(updatedResources);
+    updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
+  };
+
   return (
-    <ExpandablePolicyElement title={`Regel ${getPolicyRuleId()}`} isCard>
+    <ExpandablePolicyElement
+      title={`Regel ${getPolicyRuleId()}`}
+      isCard
+      handleDuplicateElement={handleDuplicateRule}
+      handleRemoveElement={handleDeleteRule}
+    >
       <p className={classes.subHeader}>Hvilken ressurser skal regelen gjelde for?</p>
       {displayResources}
       <div className={classes.addResourceButton}>

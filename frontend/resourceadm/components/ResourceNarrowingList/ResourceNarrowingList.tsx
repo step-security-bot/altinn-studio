@@ -10,6 +10,8 @@ interface Props {
   handleInputChange: (i: number, field: 'id' | 'type', s: string) => void;
   handleRemoveResource: (index: number) => void;
   handleClickAddResource: () => void;
+  handleRemoveElement: () => void;
+  handleDuplicateElement: () => void;
 }
 
 /**
@@ -20,12 +22,16 @@ interface Props {
  * @param props.handleInputChange function to update the values when the text fields changes value
  * @param props.handleRemoveResource function that removes a resource from the list
  * @param props.handleClickAddResource function that adds a resource to the list
+ * @param props.handleRemoveElement function to be executed when the element is to be removed
+ * @param props.handleDuplicateElement function to be executed when the element is duplicated
  */
 export const ResourceNarrowingList = ({
   resources,
   handleInputChange,
   handleRemoveResource,
   handleClickAddResource,
+  handleRemoveElement,
+  handleDuplicateElement,
 }: Props) => {
   /**
    * Displays the list of resources
@@ -48,21 +54,17 @@ export const ResourceNarrowingList = ({
    * Creates a name for the resourcegroup based on the id of the resource
    */
   const getResourceName = (): string => {
-    const lastIndex = resources.length - 1;
-
-    if (resources[lastIndex].id === '') {
-      return resources
-        .slice(0, lastIndex)
-        .map((r) => r.id)
-        .join(' - ');
-    } else {
-      return resources.map((r) => r.id).join(' - ');
-    }
+    return resources.map((r) => r.id).join(' - ');
   };
 
   return (
     <div className={classes.wrapper}>
-      <ExpandablePolicyElement title={getResourceName()} isCard={false}>
+      <ExpandablePolicyElement
+        title={getResourceName()}
+        isCard={false}
+        handleDuplicateElement={handleDuplicateElement}
+        handleRemoveElement={handleRemoveElement}
+      >
         {displayResources}
         <Button type='button' onClick={handleClickAddResource}>
           Legg til en innsnevring av ressursen {/* TODO - Komme med bedre navn*/}
