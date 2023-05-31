@@ -12,6 +12,7 @@ import { PolicyRuleSubjectListItem } from '../PolicyRuleSubjectListItem';
 import { PolicySubjectSelectButton } from '../PolicySubjectSelectButton';
 import { ResourceNarrowingList } from '../ResourceNarrowingList';
 import { VerificationModal } from '../VerificationModal';
+import { WarningCard } from '../WarningCard';
 
 interface Props {
   policyRule: PolicyRuleCardType;
@@ -58,6 +59,11 @@ export const ExpandablePolicyCard = ({
   const [ruleDescription, setRuleDescription] = useState(policyRule.Description);
   const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(policyRule.Subject);
   const [verificationModalOpen, setVerificationModalOpen] = useState(false);
+
+  //
+  const [hasResourceError, setHasResourceError] = useState(policyRule.Resources.length === 0);
+  const [hasRightsError, setHasRightsErrors] = useState(policyRule.Actions.length === 0);
+  const [hasSubjectsError, setHasSubjectsError] = useState(policyRule.Subject.length === 0);
 
   /**
    * Function to update the fields inside the rule object in the rule array.
@@ -137,6 +143,9 @@ export const ExpandablePolicyCard = ({
     const updatedResources = [...resources, newResource];
     setResources(updatedResources);
     updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
+
+    // TODO - Display Error when fields are empty???
+    setHasResourceError(false);
   };
 
   /**
@@ -212,6 +221,8 @@ export const ExpandablePolicyCard = ({
       updatedSelectedActions.splice(selectedActionIndex, 1);
       setSelectedActions(updatedSelectedActions);
       updateRules(ruleDescription, selectedSubjectTitles, updatedSelectedActions, resources);
+
+      setHasRightsErrors(updatedSelectedActions.length === 0);
     }
     // else add it
     else {
@@ -219,6 +230,8 @@ export const ExpandablePolicyCard = ({
       updatedSelectedActions.push(action);
       setSelectedActions(updatedSelectedActions);
       updateRules(ruleDescription, selectedSubjectTitles, updatedSelectedActions, resources);
+
+      setHasRightsErrors(false);
     }
   };
 
@@ -247,6 +260,8 @@ export const ExpandablePolicyCard = ({
     // Add to options list
     setSubjectOptions([...subjectOptions, { value: subjectTitle, label: subjectTitle }]);
     updateRules(ruleDescription, updatedSubjects, selectedActions, resources);
+
+    setHasSubjectsError(updatedSubjects.length === 0);
   };
 
   /**
@@ -270,6 +285,8 @@ export const ExpandablePolicyCard = ({
     setSelectedSubjectTitles(updatedSubjectTitles);
 
     updateRules(ruleDescription, updatedSubjectTitles, selectedActions, resources);
+
+    setHasSubjectsError(false);
   };
 
   /**
@@ -302,6 +319,21 @@ export const ExpandablePolicyCard = ({
     updatedResources.splice(resourceIndex, 1);
     setResources(updatedResources);
     updateRules(ruleDescription, selectedSubjectTitles, selectedActions, updatedResources);
+
+    setHasResourceError(updatedResources.length === 0);
+  };
+
+  /**
+   * Displays the given text in a warning card
+   *
+   * @param text the text to display
+   */
+  const displayWarningCard = (text: string) => {
+    return (
+      <div className={classes.warningCardWrapper}>
+        <WarningCard text={text} />
+      </div>
+    );
   };
 
   return (
@@ -318,14 +350,17 @@ export const ExpandablePolicyCard = ({
           Legg til en ressurs
         </Button>
       </div>
+      {hasResourceError && displayWarningCard('Du må legge til en ressurs')}
       <p className={classes.subHeader}>Hvilke rettigheter skal gis?</p>
       <p className={classes.smallText}>Velg minimum ett alternativ fra listen under</p>
       <div className={classes.chipWrapper}>{displayActions}</div>
+      {hasRightsError && displayWarningCard('Du må legge til hvilken rettigheter som skal gis')}
       <p className={classes.subHeader}>Hvem skal ha disse rettighetene?</p>
       {displaySubjects}
       {subjectOptions.length > 0 && (
         <PolicySubjectSelectButton options={subjectOptions} onChange={handleClickSubjectInList} />
       )}
+      {hasSubjectsError && displayWarningCard('Du må legge til hvem rettighetene skal gjelde for')}
       <p className={classes.subHeader}>Legg til en beskrivelse av regelen</p>
       <div className={classes.textAreaWrapper}>
         <TextArea
