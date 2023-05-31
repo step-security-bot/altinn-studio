@@ -154,7 +154,7 @@ export const PolicyEditor = () => {
     // TODO - display spinner when loading
     // TODO - display error if resourceId === null
     <div className={classes.policyEditorWrapper}>
-      <div className={classes.policyEditorContainer}>
+      <div>
         <div className={classes.policyEditorTop}>
           <h2 className={classes.policyEditorHeader}>Policy editor</h2>
           <p>
@@ -163,7 +163,7 @@ export const PolicyEditor = () => {
         </div>
         <p className={classes.subHeader}>Se eller legg til regler for policyen</p>
         {displayRules}
-        <div className={classes.space}>
+        <div className={classes.addCardButtonWrapper}>
           <CardButton buttonText='Legg til ekstra regelsett' onClick={handleAddCardClick} />
         </div>
         <Button

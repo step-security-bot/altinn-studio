@@ -1,3 +1,18 @@
+.wrapper {
+  display: flex;
+  width: 100%;
+}
+
+.cardWrapper {
+  width: 595px;
+  min-width: 595px;
+}
+
+.ruleWarning {
+  padding: 20px;
+  color: #E02E49;
+}
+
 .subHeader {
   font-weight: 500;
   font-size: 16px;

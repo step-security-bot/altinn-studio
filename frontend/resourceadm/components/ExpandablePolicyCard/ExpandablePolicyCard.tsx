@@ -13,6 +13,7 @@ import { PolicySubjectSelectButton } from '../PolicySubjectSelectButton';
 import { ResourceNarrowingList } from '../ResourceNarrowingList';
 import { VerificationModal } from '../VerificationModal';
 import { WarningCard } from '../WarningCard';
+import { ExclamationmarkTriangleFillIcon } from '@navikt/aksel-icons';
 
 interface Props {
   policyRule: PolicyRuleCardType;
@@ -336,49 +337,69 @@ export const ExpandablePolicyCard = ({
     );
   };
 
+  /**
+   * Gets if there is an error in the rule card
+   */
+  const getHasRuleError = () => {
+    return hasResourceError || hasRightsError || hasSubjectsError;
+  };
+
   return (
-    <ExpandablePolicyElement
-      title={`Regel ${getPolicyRuleId()}`}
-      isCard
-      handleDuplicateElement={handleDuplicateRule}
-      handleRemoveElement={() => setVerificationModalOpen(true)}
-    >
-      <p className={classes.subHeader}>Hvilken ressurser skal regelen gjelde for?</p>
-      {displayResources}
-      <div className={classes.addResourceButton}>
-        <Button type='button' onClick={handleClickAddResource}>
-          Legg til en ressurs
-        </Button>
+    <div className={classes.wrapper}>
+      <div className={classes.cardWrapper}>
+        <ExpandablePolicyElement
+          title={`Regel ${getPolicyRuleId()}`}
+          isCard
+          handleDuplicateElement={handleDuplicateRule}
+          handleRemoveElement={() => setVerificationModalOpen(true)}
+        >
+          <p className={classes.subHeader}>Hvilken ressurser skal regelen gjelde for?</p>
+          {displayResources}
+          <div className={classes.addResourceButton}>
+            <Button type='button' onClick={handleClickAddResource}>
+              Legg til en ressurs
+            </Button>
+          </div>
+          {hasResourceError && displayWarningCard('Du må legge til en ressurs')}
+          <p className={classes.subHeader}>Hvilke rettigheter skal gis?</p>
+          <p className={classes.smallText}>Velg minimum ett alternativ fra listen under</p>
+          <div className={classes.chipWrapper}>{displayActions}</div>
+          {hasRightsError && displayWarningCard('Du må legge til hvilken rettigheter som skal gis')}
+          <p className={classes.subHeader}>Hvem skal ha disse rettighetene?</p>
+          {displaySubjects}
+          {subjectOptions.length > 0 && (
+            <PolicySubjectSelectButton
+              options={subjectOptions}
+              onChange={handleClickSubjectInList}
+            />
+          )}
+          {hasSubjectsError &&
+            displayWarningCard('Du må legge til hvem rettighetene skal gjelde for')}
+          <p className={classes.subHeader}>Legg til en beskrivelse av regelen</p>
+          <div className={classes.textAreaWrapper}>
+            <TextArea
+              resize='vertical'
+              placeholder='Beskrivelse beskrevet her i tekst av tjenesteeier'
+              value={ruleDescription}
+              onChange={(e) => handleChangeDescription(e.currentTarget.value)}
+              rows={5}
+            />
+          </div>
+          <VerificationModal
+            isOpen={verificationModalOpen}
+            onClose={() => setVerificationModalOpen(false)}
+            text='Er du sikker på at du vil slette denne regelen?'
+            closeButtonText='Nei, gå tilbake'
+            actionButtonText='Ja, slett regel'
+            onPerformAction={handleDeleteRule}
+          />
+        </ExpandablePolicyElement>
       </div>
-      {hasResourceError && displayWarningCard('Du må legge til en ressurs')}
-      <p className={classes.subHeader}>Hvilke rettigheter skal gis?</p>
-      <p className={classes.smallText}>Velg minimum ett alternativ fra listen under</p>
-      <div className={classes.chipWrapper}>{displayActions}</div>
-      {hasRightsError && displayWarningCard('Du må legge til hvilken rettigheter som skal gis')}
-      <p className={classes.subHeader}>Hvem skal ha disse rettighetene?</p>
-      {displaySubjects}
-      {subjectOptions.length > 0 && (
-        <PolicySubjectSelectButton options={subjectOptions} onChange={handleClickSubjectInList} />
+      {getHasRuleError() && (
+        <div className={classes.ruleWarning}>
+          <ExclamationmarkTriangleFillIcon title='The rule has a warning' fontSize='2rem' />
+        </div>
       )}
-      {hasSubjectsError && displayWarningCard('Du må legge til hvem rettighetene skal gjelde for')}
-      <p className={classes.subHeader}>Legg til en beskrivelse av regelen</p>
-      <div className={classes.textAreaWrapper}>
-        <TextArea
-          resize='vertical'
-          placeholder='Beskrivelse beskrevet her i tekst av tjenesteeier'
-          value={ruleDescription}
-          onChange={(e) => handleChangeDescription(e.currentTarget.value)}
-          rows={5}
-        />
-      </div>
-      <VerificationModal
-        isOpen={verificationModalOpen}
-        onClose={() => setVerificationModalOpen(false)}
-        text='Er du sikker på at du vil slette denne regelen?'
-        closeButtonText='Nei, gå tilbake'
-        actionButtonText='Ja, slett regel'
-        onPerformAction={handleDeleteRule}
-      />
-    </ExpandablePolicyElement>
+    </div>
   );
 };

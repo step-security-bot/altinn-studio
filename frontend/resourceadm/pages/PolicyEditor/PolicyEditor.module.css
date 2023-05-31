@@ -8,14 +8,15 @@
   padding-bottom: 50px;
 }
 
-.policyEditorContainer {
-  width: 595px;
-  min-width: 595px;
-}
-
 .policyEditorTop {
   width: 450px;
   margin-bottom: 50px;
+}
+
+.addCardButtonWrapper {
+  margin-block: 20px;
+  width: 595px;
+  min-width: 595px;
 }
 
 .space {
