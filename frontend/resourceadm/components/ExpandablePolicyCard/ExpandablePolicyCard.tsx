@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Select, TextArea } from '@digdir/design-system-react';
+import { Button, TextArea } from '@digdir/design-system-react';
 import { Chip } from '../Chip';
 import { ExpandableCard } from '../ExpandableCard';
 import classes from './ExpandablePolicyCard.module.css';
@@ -10,6 +10,7 @@ import {
 } from 'resourceadm/types/global';
 import { PolicyResourceFields } from '../PolicyResourceFields';
 import { PolicyRuleSubjectListItem } from '../PolicyRuleSubjectListItem';
+import { PolicySubjectSelectButton } from '../PolicySubjectSelectButton';
 
 interface Props {
   policyRule: PolicyRuleCardType;
@@ -205,11 +206,12 @@ export const ExpandablePolicyCard = ({
    * Handles the click on a subject in the select list. It removes the clicked element
    * from the options list, and adds it to the selected subject title list.
    */
-  const handleClickSubjectInList = (option: string[]) => {
+  const handleClickSubjectInList = (option: string) => {
+    console.log(option);
     // As the input field is multiple, the onchance function uses string[], but
     // we are removing the element from the options list before it is displayed, so
     // it will only ever be a first value in the array.
-    const clickedOption = option[0];
+    const clickedOption = option; //[0];
 
     // Remove from options list
     const index = subjectOptions.findIndex((o) => o.value === clickedOption);
@@ -249,12 +251,7 @@ export const ExpandablePolicyCard = ({
       <p className={classes.subHeader}>Hvem skal ha disse rettighetene?</p>
       {displaySubjects}
       {subjectOptions.length > 0 && (
-        <Select
-          options={subjectOptions}
-          onChange={handleClickSubjectInList}
-          label='Legg til fler'
-          multiple
-        />
+        <PolicySubjectSelectButton options={subjectOptions} onChange={handleClickSubjectInList} />
       )}
       <p className={classes.subHeader}>Legg til en beskrivelse av regelen</p>
       <div className={classes.textAreaWrapper}>
