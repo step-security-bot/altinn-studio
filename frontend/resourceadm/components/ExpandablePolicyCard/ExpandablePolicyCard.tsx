@@ -11,6 +11,7 @@ import {
 import { PolicyRuleSubjectListItem } from '../PolicyRuleSubjectListItem';
 import { PolicySubjectSelectButton } from '../PolicySubjectSelectButton';
 import { ResourceNarrowingList } from '../ResourceNarrowingList';
+import { VerificationModal } from '../VerificationModal';
 
 interface Props {
   policyRule: PolicyRuleCardType;
@@ -56,6 +57,7 @@ export const ExpandablePolicyCard = ({
   const [selectedActions, setSelectedActions] = useState(policyRule.Actions);
   const [ruleDescription, setRuleDescription] = useState(policyRule.Description);
   const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(policyRule.Subject);
+  const [verificationModalOpen, setVerificationModalOpen] = useState(false);
 
   /**
    * Function to update the fields inside the rule object in the rule array.
@@ -307,7 +309,7 @@ export const ExpandablePolicyCard = ({
       title={`Regel ${getPolicyRuleId()}`}
       isCard
       handleDuplicateElement={handleDuplicateRule}
-      handleRemoveElement={handleDeleteRule}
+      handleRemoveElement={() => setVerificationModalOpen(true)}
     >
       <p className={classes.subHeader}>Hvilken ressurser skal regelen gjelde for?</p>
       {displayResources}
@@ -334,6 +336,14 @@ export const ExpandablePolicyCard = ({
           rows={5}
         />
       </div>
+      <VerificationModal
+        isOpen={verificationModalOpen}
+        onClose={() => setVerificationModalOpen(false)}
+        text='Er du sikker på at du vil slette denne regelen?'
+        closeButtonText='Nei, gå tilbake'
+        actionButtonText='Ja, slett regel'
+        onPerformAction={handleDeleteRule}
+      />
     </ExpandablePolicyElement>
   );
 };

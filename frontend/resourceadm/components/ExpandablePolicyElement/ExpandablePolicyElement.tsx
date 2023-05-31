@@ -54,7 +54,10 @@ export const ExpandablePolicyElement = ({
           handleClickMoreIcon={handleClickMoreButton}
           handleCloseMenu={() => setIsDropdownOpen(false)}
           handleDuplicate={handleDuplicateElement}
-          handleDelete={handleRemoveElement}
+          handleDelete={() => {
+            handleRemoveElement();
+            setIsDropdownOpen(false);
+          }}
         />
       </div>
       {isOpen && (
