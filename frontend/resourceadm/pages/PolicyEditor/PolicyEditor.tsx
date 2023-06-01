@@ -158,10 +158,9 @@ export const PolicyEditor = () => {
         <div className={classes.policyEditorTop}>
           <h2 className={classes.policyEditorHeader}>Policy editor</h2>
           <p>
-            Endrer regler for policy med navn: <strong>{resourceId}</strong>
+            Policy gjelder for ressursen: <strong>{resourceId}</strong>
           </p>
         </div>
-        <p className={classes.subHeader}>Se eller legg til regler for policyen</p>
         {displayRules}
         <div className={classes.addCardButtonWrapper}>
           <CardButton buttonText='Legg til ekstra regelsett' onClick={handleAddCardClick} />
