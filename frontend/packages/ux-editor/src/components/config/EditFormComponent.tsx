@@ -6,16 +6,17 @@ import { ComponentSpecificContent } from './componentSpecificContent';
 import { FieldSet } from '@digdir/design-system-react';
 import classes from './EditFormComponent.module.css';
 import type { FormComponent } from '../../types/FormComponent';
-import { useFormLayoutsSelector } from '../../hooks/useFormLayoutsSelector';
+import { useFormLayoutsSelector, useComponentErrorMessage } from '../../hooks';
 import { selectedLayoutNameSelector } from '../../selectors/formLayoutSelectors';
-import { useComponentErrorMessage } from '../../hooks/useComponentErrorMessage';
 
 export interface IEditFormComponentProps {
+  editFormId: string;
   component: FormComponent;
   handleComponentUpdate: React.Dispatch<React.SetStateAction<FormComponent>>;
 }
 
 export const EditFormComponent = ({
+  editFormId,
   component,
   handleComponentUpdate,
 }: IEditFormComponentProps) => {
@@ -29,6 +30,7 @@ export const EditFormComponent = ({
       if (!Tag) return null;
       return React.createElement<IGenericEditComponent>(Tag, {
         key: configType,
+        editFormId,
         handleComponentChange: handleComponentUpdate,
         component,
       });

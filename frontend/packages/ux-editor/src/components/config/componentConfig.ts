@@ -1,4 +1,4 @@
-import { ComponentType } from '../index';
+import { ComponentType } from 'app-shared/types/ComponentType';
 import { EditCodeList } from './editModal/EditCodeList';
 import { EditDataModelBindings } from './editModal/EditDataModelBindings';
 import { EditDescription } from './editModal/EditDescription';
@@ -12,6 +12,7 @@ import { EditAutoComplete } from './editModal/EditAutoComplete';
 import type { FormComponent } from '../../types/FormComponent';
 
 export interface IGenericEditComponent<T extends FormComponent = FormComponent> {
+  editFormId?: string;
   component: T;
   handleComponentChange: (component: T) => void;
   layoutName?: string;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAugmentReposWithStarred } from '../../hooks/useAugmentReposWithStarred';
-import { RepoList } from '../../components/RepoList';
+import { RepoList } from '../RepoList';
 import { useTranslation } from 'react-i18next';
 import { useReposSearch } from '../../hooks/useReposSearch';
 import { DATAGRID_ROWS_PER_PAGE_OPTIONS } from '../../constants';
@@ -11,10 +11,16 @@ type SearchResultReposList = {
   searchValue: string;
 };
 export const SearchResultReposList = ({ starredRepos, searchValue }: SearchResultReposList) => {
-  console.log("Er i SearchResultReposList komponent");
   const { t } = useTranslation();
-  const { searchResults, isLoadingSearchResults, sortModel, pageSize, setPageNumber, setSortModel, setPageSize } =
-    useReposSearch({ keyword: searchValue });
+  const {
+    searchResults,
+    isLoadingSearchResults,
+    sortModel,
+    pageSize,
+    setPageNumber,
+    setSortModel,
+    setPageSize,
+  } = useReposSearch({ keyword: searchValue });
 
   const reposWithStarred = useAugmentReposWithStarred({
     repos: searchResults?.data,

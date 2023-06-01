@@ -344,6 +344,14 @@ export const ExpandablePolicyCard = ({
     return hasResourceError || hasRightsError || hasSubjectsError;
   };
 
+  /**
+   * Removes the rule and closes the modal
+   */
+  const handleRemoveRule = () => {
+    handleDeleteRule();
+    setVerificationModalOpen(false);
+  };
+
   return (
     <div className={classes.wrapper}>
       <div className={classes.cardWrapper}>
@@ -391,7 +399,7 @@ export const ExpandablePolicyCard = ({
             text='Er du sikker på at du vil slette denne regelen?'
             closeButtonText='Nei, gå tilbake'
             actionButtonText='Ja, slett regel'
-            onPerformAction={handleDeleteRule}
+            onPerformAction={handleRemoveRule}
           />
         </ExpandablePolicyElement>
       </div>
