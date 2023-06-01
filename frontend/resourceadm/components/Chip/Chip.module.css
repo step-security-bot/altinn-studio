@@ -35,9 +35,9 @@
   border: 1px solid #00315D;
 }
 
-.chip:active, .chipSelected:active {
+.chip:focus, .chipSelected:focus {
   border: 1px solid #FFDA06;
-  /* TODO - handle active when clicked and accessed with keyboard */
+  /* TODO - handle when clicked and accessed with keyboard */
 }
 
 .text {

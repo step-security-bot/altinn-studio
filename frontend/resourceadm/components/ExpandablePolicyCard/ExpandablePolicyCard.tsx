@@ -61,7 +61,6 @@ export const ExpandablePolicyCard = ({
   const [selectedSubjectTitles, setSelectedSubjectTitles] = useState(policyRule.Subject);
   const [verificationModalOpen, setVerificationModalOpen] = useState(false);
 
-  //
   const [hasResourceError, setHasResourceError] = useState(policyRule.Resources.length === 0);
   const [hasRightsError, setHasRightsErrors] = useState(policyRule.Actions.length === 0);
   const [hasSubjectsError, setHasSubjectsError] = useState(policyRule.Subject.length === 0);
