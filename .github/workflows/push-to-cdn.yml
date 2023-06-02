@@ -1,0 +1,49 @@
+name: Push to CDN
+on:
+  push:
+    branches:
+      - 'chore/publish-to-cdn'
+    paths:
+      - 'frontend/app-development/**'
+      - 'frontend/app-preview/**'
+      - 'frontend/dashboard/**'
+      - 'frontend/language/**'
+      - 'frontend/packages/**'
+      - '.github/workflows/push-to-cdn.yml'
+      - 'package.json'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build
+    steps:
+      - name: 'Checking Out Code'
+        uses: actions/checkout@v3
+        with:
+          path: altinn-studio
+          fetch-depth: 0
+
+      - name: 'Installing Dependencies'
+        uses: ./.github/actions/yarn-install
+
+      - name: 'Building'
+        run: yarn build
+
+      - name: Checkout Altinn-CDN repository
+        uses: actions/checkout@v3
+        with:
+          repository: 'Altinn/altinn-cdn'
+          token: ${{secrets.ALTINN_CDN_TOKEN}}
+          path: cdn
+
+      - name: Run publish script
+        working-directory: altinn-studio/frontend
+        run: |
+          bash .github/scripts/push-to-cdn.sh \
+           --frontend . \
+           --cdn ../../cdn \
+           --commit \
+
+      - name: Push to CDN
+        working-directory: cdn
+        run: git push
