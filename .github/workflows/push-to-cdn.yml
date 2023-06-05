@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
 
       - name: 'Installing Dependencies'
-        uses: ./altinn-studio/.github/actions/yarn-install
+        uses: ./.github/actions/yarn-install
 
       - name: 'Building'
         run: yarn build
