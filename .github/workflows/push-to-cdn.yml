@@ -25,6 +25,8 @@ jobs:
 
       - name: 'Installing Dependencies'
         uses: ./studio/.github/actions/yarn-install
+        with:
+          install-path: studio
 
       - name: 'Building'
         working-directory: studio
