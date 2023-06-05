@@ -40,10 +40,10 @@ jobs:
           path: cdn
 
       - name: Run publish script
-        working-directory: altinn-studio/frontend
+        working-directory: studio
         run: |
           bash .github/scripts/push-to-cdn.sh \
-           --frontend . \
+           --frontend ./frontend \
            --cdn ../../cdn \
            --commit \
 
