@@ -13,6 +13,7 @@ runs:
 
     - name: "Getting yarn cache directory path"
       id: yarn-cache-dir-path
+      working-directory: ${{ inputs.install-path }}
       run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
       shell: bash
 
