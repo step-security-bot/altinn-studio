@@ -10,6 +10,7 @@ on:
       - 'frontend/language/**'
       - 'frontend/packages/**'
       - '.github/workflows/push-to-cdn.yml'
+      - '.github/scripts/push-to-cdn.sh'
       - 'package.json'
 
 jobs:
