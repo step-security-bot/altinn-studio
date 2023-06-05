@@ -133,44 +133,44 @@ else
 fi
 
 echo "-------------------------------------"
-if [[ -z "$AZURE_STORAGE_ACCOUNT_NAME" ]]; then
-  echo "Skipping publish to azure cdn. As --azure-sa-name flag not defined"
-else
-  if [[ -d "$AZURE_STORAGE_ACCOUNT_NAME" ]]; then
-    echo
-    echo "azure-sa-name seems to be a local directory. Simulating azcopy sync with rsync to folder"
-    echo
-    toolkits_rsync_opts=( -am --include='*/' --include="${APP_FULL}/*" --include="index.json" )
-    if [[ "$PRE_RELEASE" == "no" ]]; then
-      toolkits_rsync_opts+=( --include="${APP_MAJOR}/*" --include="${APP_MAJOR_MINOR}/*" )
-    fi
-    toolkits_rsync_opts+=( --exclude='*' )
-    schemas_rsync_opts=( -am --include='*/' --include="component/*" --include="layout/*"  --exclude='*' )
-    set -x
-    rsync "${toolkits_rsync_opts[@]}" $TARGET $AZURE_STORAGE_ACCOUNT_NAME
-    if [[ "$PRE_RELEASE" == "no" ]]; then
-      rsync "${schemas_rsync_opts[@]}" $TARGET_SCHEMAS/json $AZURE_STORAGE_ACCOUNT_NAME -v
-    fi
-    set +x
-    echo "-------------------------------------"
-  else
-    AZCOPY_INCLUDE_REGEX="^index\.json$|^$APP_FULL/*"
-    if [[ "$PRE_RELEASE" == "no" ]]; then
-      AZCOPY_INCLUDE_REGEX+="|^$APP_MAJOR/.*|^$APP_MAJOR_MINOR/.*"
-    fi
-    AZCOPY_TOOLKITS_OPTS=( --include-regex="${AZCOPY_INCLUDE_REGEX}" )
-    AZCOPY_SCHEMAS_OPTS=( --include-regex="^component/.*|^layout/.*" )
-    AZCOPY_ADDITIONAL_OPTS=( --put-md5 --compare-hash=MD5 --delete-destination=true )
-    if [[ "$SYNC_AZURE_CDN" == "no" ]]; then
-      echo "Publish to azure cdn will run with --dry-run (toggle with --azure-sync-cdn). No files will actually be synced"
-      AZCOPY_ADDITIONAL_OPTS+=( --dry-run )
-    else
-      echo "Publishing files to azure cdn"
-    fi
-    azcopy sync "$TARGET" "$AZURE_TARGET_URI/toolkits${AZURE_STORAGE_ACCOUNT_TOKEN}" "${AZCOPY_TOOLKITS_OPTS[@]}" "${AZCOPY_ADDITIONAL_OPTS[@]}"
-    if [[ "$PRE_RELEASE" == "no" ]]; then
-      azcopy sync "${TARGET_SCHEMAS}/json" "$AZURE_TARGET_URI/${AZURE_STORAGE_ACCOUNT_TOKEN}" "${AZCOPY_SCHEMAS_OPTS[@]}" "${AZCOPY_ADDITIONAL_OPTS[@]}"
-    fi
-    echo "-------------------------------------"
-  fi
-fi
+# if [[ -z "$AZURE_STORAGE_ACCOUNT_NAME" ]]; then
+#   echo "Skipping publish to azure cdn. As --azure-sa-name flag not defined"
+# else
+#   if [[ -d "$AZURE_STORAGE_ACCOUNT_NAME" ]]; then
+#     echo
+#     echo "azure-sa-name seems to be a local directory. Simulating azcopy sync with rsync to folder"
+#     echo
+#     toolkits_rsync_opts=( -am --include='*/' --include="${APP_FULL}/*" --include="index.json" )
+#     if [[ "$PRE_RELEASE" == "no" ]]; then
+#       toolkits_rsync_opts+=( --include="${APP_MAJOR}/*" --include="${APP_MAJOR_MINOR}/*" )
+#     fi
+#     toolkits_rsync_opts+=( --exclude='*' )
+#     schemas_rsync_opts=( -am --include='*/' --include="component/*" --include="layout/*"  --exclude='*' )
+#     set -x
+#     rsync "${toolkits_rsync_opts[@]}" $TARGET $AZURE_STORAGE_ACCOUNT_NAME
+#     if [[ "$PRE_RELEASE" == "no" ]]; then
+#       rsync "${schemas_rsync_opts[@]}" $TARGET_SCHEMAS/json $AZURE_STORAGE_ACCOUNT_NAME -v
+#     fi
+#     set +x
+#     echo "-------------------------------------"
+#   else
+#     AZCOPY_INCLUDE_REGEX="^index\.json$|^$APP_FULL/*"
+#     if [[ "$PRE_RELEASE" == "no" ]]; then
+#       AZCOPY_INCLUDE_REGEX+="|^$APP_MAJOR/.*|^$APP_MAJOR_MINOR/.*"
+#     fi
+#     AZCOPY_TOOLKITS_OPTS=( --include-regex="${AZCOPY_INCLUDE_REGEX}" )
+#     AZCOPY_SCHEMAS_OPTS=( --include-regex="^component/.*|^layout/.*" )
+#     AZCOPY_ADDITIONAL_OPTS=( --put-md5 --compare-hash=MD5 --delete-destination=true )
+#     if [[ "$SYNC_AZURE_CDN" == "no" ]]; then
+#       echo "Publish to azure cdn will run with --dry-run (toggle with --azure-sync-cdn). No files will actually be synced"
+#       AZCOPY_ADDITIONAL_OPTS+=( --dry-run )
+#     else
+#       echo "Publishing files to azure cdn"
+#     fi
+#     azcopy sync "$TARGET" "$AZURE_TARGET_URI/toolkits${AZURE_STORAGE_ACCOUNT_TOKEN}" "${AZCOPY_TOOLKITS_OPTS[@]}" "${AZCOPY_ADDITIONAL_OPTS[@]}"
+#     if [[ "$PRE_RELEASE" == "no" ]]; then
+#       azcopy sync "${TARGET_SCHEMAS}/json" "$AZURE_TARGET_URI/${AZURE_STORAGE_ACCOUNT_TOKEN}" "${AZCOPY_SCHEMAS_OPTS[@]}" "${AZCOPY_ADDITIONAL_OPTS[@]}"
+#     fi
+#     echo "-------------------------------------"
+#   fi
+# fi
