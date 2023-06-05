@@ -27,6 +27,7 @@ jobs:
         uses: ./studio/.github/actions/yarn-install
 
       - name: 'Building'
+        working-directory: studio
         run: yarn build
 
       - name: Checkout Altinn-CDN repository
