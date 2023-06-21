@@ -18,6 +18,7 @@ import { useRepoStatusQuery } from 'resourceadm/hooks/queries';
 import { MergeConflictModal } from 'resourceadm/components/MergeConflictModal';
 import { NewResourceModal } from 'resourceadm/components/NewResourceModal';
 import { getResourcePageURL } from 'resourceadm/utils/urlUtils';
+import { MigrateModal } from 'resourceadm/components/MigrateModal';
 
 /**
  * Displays the page for the resource dashboard
@@ -33,6 +34,7 @@ export const ResourceDashboardPage = () => {
   const [hasMergeConflict, setHasMergeConflict] = useState(false);
 
   const [newResourceModalOpen, setNewResourceModalOpen] = useState(false);
+  const [migrateModalOpen, setMigrateModalOpen] = useState(false);
 
   // Gets the repo status and the function to refetch it
   const { data: repoStatus, refetch } = useRepoStatusQuery(selectedContext, repo);
@@ -135,7 +137,7 @@ export const ResourceDashboardPage = () => {
               color='secondary'
               icon={<PlusCircleIcon title='Migrer ressurs' />}
               iconPlacement='right'
-              onClick={() => {}}
+              onClick={() => setMigrateModalOpen(true)}
               size='medium'
             >
               <strong>Migrer ressurs</strong>
@@ -171,6 +173,7 @@ export const ResourceDashboardPage = () => {
           onClose={() => setNewResourceModalOpen(false)}
           onCreateNewResource={handleCreateNewResource}
         />
+        <MigrateModal isOpen={migrateModalOpen} onClose={() => setMigrateModalOpen(false)} />
       </div>
       <Footer />
     </>
