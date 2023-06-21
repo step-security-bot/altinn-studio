@@ -85,5 +85,6 @@ export const App = (): JSX.Element => {
     );
   }
 
+  // Test comment
   return <PageSpinner text={t('dashboard.loading')} />;
 };
