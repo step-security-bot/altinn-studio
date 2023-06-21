@@ -1,0 +1,18 @@
+.buttonWrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 40px;
+}
+
+p, h2 {
+  margin: 0;
+}
+
+.text {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.closeButton {
+  margin-right: 10px;
+}

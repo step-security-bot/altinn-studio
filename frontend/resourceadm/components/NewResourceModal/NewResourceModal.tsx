@@ -11,7 +11,7 @@ interface Props {
 }
 
 /**
- * Displays the modal telling the user that there is a merge conflict
+ * Displays the modal for creating a new resource
  *
  * @param props.isOpen boolean for if the modal is open or not
  * @param props.onClose function to close the modal
