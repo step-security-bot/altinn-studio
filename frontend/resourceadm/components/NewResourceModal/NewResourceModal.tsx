@@ -83,7 +83,7 @@ export const NewResourceModal = ({ isOpen, onClose, onCreateNewResource }: Props
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title='Opprett ny ressurs'>
+    <Modal isOpen={isOpen} onClose={onClose} title='Opprett ny ressurs' shouldCloseOnOverlay>
       <p className={classes.text}>Velg et navn for å opprette ressursen din.</p>
       <p className={classes.text}>Navnet kan endres på frem til tjenesten din er publisert.</p>
       <p className={classes.textfieldHeader}>Ressursnavn (Bokmål)</p>

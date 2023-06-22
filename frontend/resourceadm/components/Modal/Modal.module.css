@@ -2,6 +2,7 @@ p, h2 {
   margin: 0;
 }
 
+/*
 .contentDivider {
   border: solid 1px #D6D6D6;
   margin-block: 25px;
@@ -10,3 +11,26 @@ p, h2 {
 .modalTitle {
   font-size: 24px;
 }
+*/
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modalContent {
+  background-color: white;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  /* Add more styles as needed for your modal content */
+}
+
