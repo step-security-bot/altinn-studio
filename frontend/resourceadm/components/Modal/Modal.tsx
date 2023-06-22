@@ -8,6 +8,7 @@ interface ModalProps {
   children: ReactNode;
 }
 
+// TODO - Fix Keyboard bug
 export const Modal: React.FC<ModalProps> = ({
   isOpen,
   onClose,
