@@ -35,9 +35,9 @@ export function NumberRestrictions({
       restrictions[IntRestrictionKey.exclusiveMinimum] ?? restrictions[IntRestrictionKey.minimum],
     max:
       restrictions[IntRestrictionKey.exclusiveMaximum] ?? restrictions[IntRestrictionKey.maximum],
-    restrictions: Object.fromEntries(
-      Object.values(IntRestrictionKey).map((key) => [key, restrictions[key]])
-    ),
+    restrictions: { ...Object.fromEntries(
+      Object.values(IntRestrictionKey).map((key) => [key, restrictions[key]]))
+    },
     numberRestrictionsError: NumberRestrictionsError.NoError,
   };
   const [formatState, dispatch] = useReducer(numberRestrictionsReducer, initialState);

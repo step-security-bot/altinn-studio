@@ -131,22 +131,23 @@ export const numberRestrictionsReducer = (
   state: NumberRestrictionsReducerState,
   action: NumberRestrictionsReducerAction
 ) => {
+  const newState = { ...state };
   switch (action.type) {
     case NumberRestrictionsReducerActionType.setMinIncl:
-      setMinIncl(state, action);
+      setMinIncl(newState, action);
       break;
     case NumberRestrictionsReducerActionType.setMaxIncl:
-      setMaxIncl(state, action);
+      setMaxIncl(newState, action);
       break;
     case NumberRestrictionsReducerActionType.setMin:
-      setMin(state, action);
+      setMin(newState, action);
       break;
     case NumberRestrictionsReducerActionType.setMax:
-      setMax(state, action);
+      setMax(newState, action);
       break;
     case NumberRestrictionsReducerActionType.setRestriction:
-      setRestriction(state, action);
+      setRestriction(newState, action);
   }
-  action.changeCallback(state.restrictions);
-  return state;
+  action.changeCallback(newState.restrictions);
+  return newState;
 };
