@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, ButtonVariant } from '@digdir/design-system-react';
+import { Alert, Button, ButtonVariant } from '@digdir/design-system-react';
 import classes from './ConditionalRenderingTab.module.css';
 import { PlusIcon } from '@navikt/aksel-icons';
 import { ConditionalRenderingModal } from '../toolbar/ConditionalRenderingModal';
@@ -12,6 +12,18 @@ export const ConditionalRenderingTab = () => {
   const t = useText();
   return (
     <div className={classes.conditionalRendering}>
+      <Alert severity='warning'>
+        {t('right_menu.rules_conditional_rendering_info')}
+        <a
+          href='https://docs.altinn.studio/nb/app/development/logic/expressions/'
+          target='_blank'
+          rel='noreferrer'
+        >
+          {t('right_menu.rules_conditional_rendering_info_link')}
+        </a>
+        {t('right_menu.rules_conditional_rendering_info_how_to_use')}
+        {t('right_menu.rules_conditional_rendering_info_deprecated')}
+      </Alert>
       <div>
         <div className={classes.header}>
           <span>{t('right_menu.rules_conditional_rendering')}</span>
@@ -31,7 +43,7 @@ export const ConditionalRenderingTab = () => {
           />
         </div>
       </div>
-      <Divider marginless/>
+      <Divider marginless />
       <Dynamics />
     </div>
   );
