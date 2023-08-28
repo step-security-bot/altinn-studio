@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 
 using Altinn.Studio.Designer.Helpers;
+using Altinn.Studio.Designer.Models;
 using Altinn.Studio.Designer.Services.Interfaces;
 
 using Microsoft.AspNetCore.Authorization;
@@ -58,7 +59,7 @@ namespace Altinn.Studio.Designer.Controllers
 
             try
             {
-                Dictionary<string, string> texts = await _textsService.GetTextsV2(org, repo, developer, languageCode);
+                Dictionary<string, string> texts = await _textsService.GetTextsV2(new AltinnAppContext(org, repo, developer), languageCode);
                 return Ok(texts);
             }
             catch (IOException)
@@ -95,8 +96,8 @@ namespace Altinn.Studio.Designer.Controllers
                 return BadRequest($"The texts file, {languageCode}.texts.json, that you are trying to add have invalid format.");
             }
 
-            await _textsService.UpdateTexts(org, repo, developer, languageCode, jsonTexts);
-            Dictionary<string, string> savedTexts = await _textsService.GetTextsV2(org, repo, developer, languageCode);
+            await _textsService.UpdateTexts(new AltinnAppContext(org, repo, developer), languageCode, jsonTexts);
+            Dictionary<string, string> savedTexts = await _textsService.GetTextsV2(new AltinnAppContext(org, repo, developer), languageCode);
 
             return Ok(savedTexts);
         }
@@ -114,7 +115,7 @@ namespace Altinn.Studio.Designer.Controllers
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
 
-            await _textsService.ConvertV1TextsToV2(org, repo, developer);
+            await _textsService.ConvertV1TextsToV2(new AltinnAppContext(org, repo, developer));
 
             return NoContent();
         }
@@ -133,7 +134,7 @@ namespace Altinn.Studio.Designer.Controllers
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
 
-            _textsService.DeleteTexts(org, repo, developer, languageCode);
+            _textsService.DeleteTexts(new AltinnAppContext(org, repo, developer), languageCode);
 
             return Ok($"Texts file, {languageCode}.texts.json, was successfully deleted.");
         }

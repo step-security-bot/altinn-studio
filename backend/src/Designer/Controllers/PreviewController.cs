@@ -87,7 +87,7 @@ namespace Altinn.Studio.Designer.Controllers
         public async Task<ActionResult<Application>> ApplicationMetadata(string org, string app)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             Application applicationMetadata = await altinnAppGitRepository.GetApplicationMetadata();
             return Ok(applicationMetadata);
         }
@@ -103,7 +103,7 @@ namespace Altinn.Studio.Designer.Controllers
         public async Task<ActionResult<ApplicationSettings>> ApplicationSettings(string org, string app)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             Application applicationMetadata = await altinnAppGitRepository.GetApplicationMetadata();
             ApplicationSettings applicationSettings = new()
             {
@@ -127,7 +127,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 LayoutSets layoutSets = await altinnAppGitRepository.GetLayoutSetsFile();
                 return Ok(layoutSets);
             }
@@ -151,7 +151,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 JsonNode layoutSettings = await altinnAppGitRepository.GetLayoutSettingsAndCreateNewIfNotFound(null);
                 byte[] layoutSettingsContent = JsonSerializer.SerializeToUtf8Bytes(layoutSettings);
                 return new FileContentResult(layoutSettingsContent, MimeTypeMap.GetMimeType(".json"));
@@ -176,7 +176,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 JsonNode layoutSettings = await altinnAppGitRepository.GetLayoutSettingsAndCreateNewIfNotFound(layoutSetName);
                 byte[] layoutSettingsContent = JsonSerializer.SerializeToUtf8Bytes(layoutSettings);
                 return new FileContentResult(layoutSettingsContent, MimeTypeMap.GetMimeType(".json"));
@@ -318,7 +318,7 @@ namespace Altinn.Studio.Designer.Controllers
         public async Task<ActionResult<Models.TextResource>> Language(string org, string app, string languageCode)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             Models.TextResource textResource = await altinnAppGitRepository.GetTextV1(languageCode);
             return Ok(textResource);
         }
@@ -382,7 +382,7 @@ namespace Altinn.Studio.Designer.Controllers
             }
             string modelPath = $"/App/models/{dataType.Id}.schema.json";
             string decodedPath = Uri.UnescapeDataString(modelPath);
-            string formData = await _schemaModelService.GetSchema(org, app, developer, decodedPath);
+            string formData = await _schemaModelService.GetSchema(new AltinnAppContext(org, app, developer), decodedPath);
             return Ok(formData);
         }
 
@@ -552,7 +552,7 @@ namespace Altinn.Studio.Designer.Controllers
         public async Task<ActionResult<Models.TextResource>> TextResources(string org, string app)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             Models.TextResource textResource = await altinnAppGitRepository.GetTextV1("nb");
             return Ok(textResource);
         }
@@ -571,7 +571,7 @@ namespace Altinn.Studio.Designer.Controllers
             string modelPath = $"/App/models/{datamodel}.schema.json";
             string decodedPath = Uri.UnescapeDataString(modelPath);
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-            string json = await _schemaModelService.GetSchema(org, app, developer, decodedPath);
+            string json = await _schemaModelService.GetSchema(new AltinnAppContext(org, app, developer), decodedPath);
             return Ok(json);
         }
 
@@ -586,7 +586,7 @@ namespace Altinn.Studio.Designer.Controllers
         public async Task<ActionResult<Dictionary<string, JsonNode>>> GetFormLayouts(string org, string app)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             Dictionary<string, JsonNode> formLayouts = await altinnAppGitRepository.GetFormLayouts(null);
             // return as byte array to imitate app backend
             byte[] formLayoutsContent = JsonSerializer.SerializeToUtf8Bytes(formLayouts);
@@ -605,7 +605,7 @@ namespace Altinn.Studio.Designer.Controllers
         public async Task<ActionResult<Dictionary<string, JsonNode>>> GetFormLayouts(string org, string app, [FromRoute] string layoutSetName)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             Dictionary<string, JsonNode> formLayouts = await altinnAppGitRepository.GetFormLayouts(layoutSetName);
             // return as byte array to imitate app backend
             byte[] formLayoutsContent = JsonSerializer.SerializeToUtf8Bytes(formLayouts);
@@ -625,7 +625,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 string ruleHandler = await altinnAppGitRepository.GetRuleHandler(null);
                 return Ok(ruleHandler);
             }
@@ -649,7 +649,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 string ruleHandler = await altinnAppGitRepository.GetRuleHandler(layoutSetName);
                 return Ok(ruleHandler);
             }
@@ -672,7 +672,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 string ruleConfig = await altinnAppGitRepository.GetRuleConfigAndAddDataToRootIfNotAlreadyPresent(null);
                 return Ok(ruleConfig);
             }
@@ -696,7 +696,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 string ruleConfig = await altinnAppGitRepository.GetRuleConfigAndAddDataToRootIfNotAlreadyPresent(layoutSetName);
                 return Ok(ruleConfig);
             }
@@ -720,7 +720,7 @@ namespace Altinn.Studio.Designer.Controllers
             {
                 List<ApplicationLanguage> applicationLanguages = new();
                 string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-                IList<string> languages = _textsService.GetLanguages(org, app, developer);
+                IList<string> languages = _textsService.GetLanguages(new AltinnAppContext(org, app, developer));
                 foreach (string language in languages)
                 {
                     applicationLanguages.Add(new ApplicationLanguage() { Language = language });
@@ -748,7 +748,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 string options = await altinnAppGitRepository.GetOptions(optionListId);
                 return Ok(options);
             }
@@ -775,7 +775,7 @@ namespace Altinn.Studio.Designer.Controllers
             {
                 // TODO: Need code to get dynamic options list based on language and source?
                 string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 string options = await altinnAppGitRepository.GetOptions(optionListId);
                 return Ok(options);
             }

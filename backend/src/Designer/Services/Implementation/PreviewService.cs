@@ -26,7 +26,7 @@ public class PreviewService : IPreviewService
     /// <inherit />
     public async Task<Instance> GetMockInstance(string org, string app, string developer, int? instanceOwnerPartyId, string layoutSetName)
     {
-        AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+        AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
         Application applicationMetadata = await altinnAppGitRepository.GetApplicationMetadata();
         DataType dataType = await GetDataTypeForLayoutSetName(org, app, developer, layoutSetName);
         string task = await GetTaskForLayoutSetName(org, app, developer, layoutSetName);
@@ -67,7 +67,7 @@ public class PreviewService : IPreviewService
     /// <param name="layoutSetName">LayoutSetName to get dataType for</param>
     public async Task<DataType> GetDataTypeForLayoutSetName(string org, string app, string developer, string layoutSetName)
     {
-        AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+        AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
         string task = await GetTaskForLayoutSetName(org, app, developer, layoutSetName);
         Application applicationMetadata = await altinnAppGitRepository.GetApplicationMetadata();
         if (applicationMetadata.DataTypes is { Count: > 0 })
@@ -88,7 +88,7 @@ public class PreviewService : IPreviewService
     /// <returns></returns>
     private async Task<string> GetTaskForLayoutSetName(string org, string app, string developer, string layoutSetName)
     {
-        AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+        AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
         string task = "Task_1";
         if (!string.IsNullOrEmpty(layoutSetName))
         {

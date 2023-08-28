@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
-
+using Altinn.Studio.Designer.Models;
 using Altinn.Studio.Designer.Services.Interfaces;
 
 namespace Altinn.Studio.Designer.Services.Implementation
@@ -24,7 +24,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
         /// <inheritdoc />
         public IList<string> GetLanguages(string org, string repo, string developer)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, repo, developer));
 
             List<string> languages = new List<string>();
 

@@ -51,7 +51,7 @@ namespace Altinn.Studio.Designer.Controllers
             var decodedPath = Uri.UnescapeDataString(modelPath);
 
             var developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-            var json = await _schemaModelService.GetSchema(org, repository, developer, decodedPath);
+            var json = await _schemaModelService.GetSchema(new AltinnAppContext(org, repository, developer), decodedPath);
 
             return Ok(json);
         }
@@ -73,7 +73,7 @@ namespace Altinn.Studio.Designer.Controllers
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
             string content = payload.ToString();
 
-            await _schemaModelService.UpdateSchema(org, repository, developer, modelPath, content, saveOnly);
+            await _schemaModelService.UpdateSchema(new AltinnAppContext(org, repository, developer), modelPath, content, saveOnly);
 
             return NoContent();
         }
@@ -90,7 +90,7 @@ namespace Altinn.Studio.Designer.Controllers
         public async Task<IActionResult> Delete(string org, string repository, [FromQuery] string modelPath)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-            await _schemaModelService.DeleteSchema(org, repository, developer, modelPath);
+            await _schemaModelService.DeleteSchema(new AltinnAppContext(org, repository, developer), modelPath);
 
             return NoContent();
         }
@@ -107,7 +107,7 @@ namespace Altinn.Studio.Designer.Controllers
         public ActionResult<IEnumerable<AltinnCoreFile>> GetDatamodels(string org, string repository)
         {
             var developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-            var schemaFiles = _schemaModelService.GetSchemaFiles(org, repository, developer);
+            var schemaFiles = _schemaModelService.GetSchemaFiles(new AltinnAppContext(org, repository, developer));
 
             return Ok(schemaFiles);
         }
@@ -124,7 +124,7 @@ namespace Altinn.Studio.Designer.Controllers
         public ActionResult<IEnumerable<AltinnCoreFile>> GetXSDDatamodels(string org, string repository)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-            IList<AltinnCoreFile> schemaFiles = _schemaModelService.GetSchemaFiles(org, repository, developer, true);
+            IList<AltinnCoreFile> schemaFiles = _schemaModelService.GetSchemaFiles(new AltinnAppContext(org, repository, developer), true);
 
             return Ok(schemaFiles);
         }
@@ -150,7 +150,7 @@ namespace Altinn.Studio.Designer.Controllers
 
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
 
-            string jsonSchema = await _schemaModelService.BuildSchemaFromXsd(org, repository, developer, fileName, thefile.OpenReadStream());
+            string jsonSchema = await _schemaModelService.BuildSchemaFromXsd(new AltinnAppContext(org, repository, developer), fileName, thefile.OpenReadStream());
 
             return Created(Uri.EscapeDataString(fileName), jsonSchema);
         }
@@ -172,7 +172,7 @@ namespace Altinn.Studio.Designer.Controllers
             }
 
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-            var (relativePath, model) = await _schemaModelService.CreateSchemaFromTemplate(org, repository, developer, createModel.ModelName, createModel.RelativeDirectory, createModel.Altinn2Compatible);
+            var (relativePath, model) = await _schemaModelService.CreateSchemaFromTemplate(new AltinnAppContext(org, repository, developer), createModel.ModelName, createModel.RelativeDirectory, createModel.Altinn2Compatible);
 
             // Sets the location header and content-type manually instead of using CreatedAtAction
             // because the latter overrides the content type and sets it to text/plain.
@@ -206,9 +206,9 @@ namespace Altinn.Studio.Designer.Controllers
             string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
             Guard.AssertFileExtensionIsOfType(filePath, ".xsd");
 
-            string xsd = await _schemaModelService.GetSchema(org, repository, developer, filePath);
+            string xsd = await _schemaModelService.GetSchema(new AltinnAppContext(org, repository, developer), filePath);
             var xsdStream = new MemoryStream(Encoding.UTF8.GetBytes(xsd ?? string.Empty));
-            string jsonSchema = await _schemaModelService.BuildSchemaFromXsd(org, repository, developer, filePath, xsdStream);
+            string jsonSchema = await _schemaModelService.BuildSchemaFromXsd(new AltinnAppContext(org, repository, developer), filePath, xsdStream);
 
             return Created(filePath, jsonSchema);
         }

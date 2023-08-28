@@ -2,6 +2,7 @@ using System.IO;
 using Altinn.Studio.Designer.Configuration;
 using Altinn.Studio.Designer.Helpers.Extensions;
 using Altinn.Studio.Designer.Infrastructure.GitRepository;
+using Altinn.Studio.Designer.Models;
 using Altinn.Studio.Designer.Services.Interfaces;
 
 namespace Altinn.Studio.Designer.Factories
@@ -34,20 +35,20 @@ namespace Altinn.Studio.Designer.Factories
         /// Creates an instance of <see cref="AltinnGitRepository"/>
         /// </summary>
         /// <returns><see cref="AltinnGitRepository"/></returns>
-        public AltinnGitRepository GetAltinnGitRepository(string org, string repository, string developer)
+        public AltinnGitRepository GetAltinnGitRepository(AltinnAppContext appContext)
         {
-            var repositoryDirectory = GetRepositoryPath(org, repository, developer);
-            return new AltinnGitRepository(org, repository, developer, _repositoriesRootDirectory, repositoryDirectory);
+            var repositoryDirectory = GetRepositoryPath(appContext.Org, appContext.App, appContext.Developer);
+            return new AltinnGitRepository(appContext.Org, appContext.App, appContext.Developer, _repositoriesRootDirectory, repositoryDirectory);
         }
 
         /// <summary>
         /// Creates an instance of <see cref="AltinnAppGitRepository"/>
         /// </summary>
         /// <returns><see cref="AltinnAppGitRepository"/></returns>
-        public AltinnAppGitRepository GetAltinnAppGitRepository(string org, string repository, string developer)
+        public AltinnAppGitRepository GetAltinnAppGitRepository(AltinnAppContext appContext)
         {
-            var repositoryDirectory = GetRepositoryPath(org, repository, developer);
-            return new AltinnAppGitRepository(org, repository, developer, _repositoriesRootDirectory, repositoryDirectory);
+            var repositoryDirectory = GetRepositoryPath(appContext.Org, appContext.App, appContext.Developer);
+            return new AltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer, _repositoriesRootDirectory, repositoryDirectory);
         }
 
         /// <summary>

@@ -42,7 +42,7 @@ namespace Altinn.Studio.Designer.Controllers
             AltinnStudioSettings settings;
             try
             {
-                var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(org, repository, developer);
+                var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(new AltinnAppContext(org, repository, developer));
                 settings = await altinnGitRepository.GetAltinnStudioSettings();
             }
             catch (DirectoryNotFoundException)
@@ -67,7 +67,7 @@ namespace Altinn.Studio.Designer.Controllers
                 return BadRequest(ModelState);
             }
 
-            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(org, repository, developer);
+            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(new AltinnAppContext(org, repository, developer));
             await altinnGitRepository.SaveAltinnStudioSettings(settings);
             return Ok(settings);
         }

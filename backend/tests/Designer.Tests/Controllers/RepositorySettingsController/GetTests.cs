@@ -29,7 +29,7 @@ namespace Designer.Tests.Controllers.RepositorySettingsController
         }
 
         [Theory]
-        [InlineData("ttd", "thisDoesNotExist-datamodels")]
+        [InlineData("ttd", "thisdoesnotexist-datamodels")]
         public async Task Get_RepositoryDoesNotExists_ShouldReturnNotFound(string org, string repo)
         {
             string requestUrl = VersionPrefix(org, repo);

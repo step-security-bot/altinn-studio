@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Altinn.Studio.Designer.Enums;
 using Altinn.Studio.Designer.Factories;
 using Altinn.Studio.Designer.Infrastructure.GitRepository;
+using Altinn.Studio.Designer.Models;
 using Designer.Tests.Utils;
 using Xunit;
 
@@ -78,7 +79,7 @@ namespace Designer.Tests.Infrastructure.GitRepository
             var repositoriesRootDirectory = TestDataHelper.GetTestDataRepositoriesRootDirectory();
             var altinnGitRepositoryFactory = new AltinnGitRepositoryFactory(repositoriesRootDirectory);
 
-            var altinnGitRepository = altinnGitRepositoryFactory.GetAltinnGitRepository(org, repository, developer);
+            var altinnGitRepository = altinnGitRepositoryFactory.GetAltinnGitRepository(new AltinnAppContext(org, repository, developer));
             var files = altinnGitRepository.GetSchemaFiles();
 
             Assert.Equal(expectedSchemaFiles, files.Count);

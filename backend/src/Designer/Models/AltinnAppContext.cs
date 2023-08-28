@@ -9,8 +9,17 @@ namespace Altinn.Studio.Designer.Models
     /// </summary>
     public class AltinnAppContext
     {
+        /// <summary>
+        /// The organization owning the repository identfied by it's short name as defined in Gitea.
+        /// </summary>
         public string Org { get; }
+        /// <summary>
+        /// The name of the repository as specified in Gitea.
+        /// </summary>
         public string App { get; }
+        /// <summary>
+        /// The user name of the developer working on the repository.
+        /// </summary>
         public string Developer { get; }
 
         public AltinnAppContext(string org, string app, string developer)

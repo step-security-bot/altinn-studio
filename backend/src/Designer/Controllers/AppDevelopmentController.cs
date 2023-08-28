@@ -476,7 +476,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(HttpContext);
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
                 string[] optionListIds = altinnAppGitRepository.GetOptionListIds();
                 return Ok(optionListIds);
             }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Altinn.Studio.Designer.Helpers;
+using Altinn.Studio.Designer.Models;
 using Altinn.Studio.Designer.Services.Interfaces;
 using LibGit2Sharp;
 using Microsoft.AspNetCore.Authorization;
@@ -53,7 +54,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 IList<string> languages = _languagesService.GetLanguages(org, repo, developer);
-                List<string> keys = await _textsService.GetKeys(org, repo, developer, languages);
+                List<string> keys = await _textsService.GetKeys(new AltinnAppContext(org, repo, developer), languages);
                 return Ok(keys);
             }
             catch (JsonException)
@@ -94,7 +95,7 @@ namespace Altinn.Studio.Designer.Controllers
 
             try
             {
-                string response = await _textsService.UpdateKey(org, repo, developer, languages, oldKey, newKey);
+                string response = await _textsService.UpdateKey(new AltinnAppContext(org, repo, developer), languages, oldKey, newKey);
                 return Ok(response);
             }
             catch (JsonException)

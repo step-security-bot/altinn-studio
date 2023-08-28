@@ -40,8 +40,8 @@ public class TextsServiceTest : IDisposable
         CreatedTestRepoPath = await TestDataHelper.CopyRepositoryForTest(org, repository, developer, targetRepository);
         List<TextIdMutation> keyMutations = new() { new() { OldId = "some-old-id", NewId = "new-id" } };
 
-        await textsService.UpdateRelatedFiles(org, targetRepository, developer, keyMutations);
-        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, targetRepository, developer);
+        await textsService.UpdateRelatedFiles(new AltinnAppContext(org, targetRepository, developer), keyMutations);
+        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, targetRepository, developer));
         JsonNode formLayout = await altinnAppGitRepository.GetLayout(layoutSetName, layoutName);
 
         formLayout.Should().NotBeNull();
@@ -66,8 +66,8 @@ public class TextsServiceTest : IDisposable
 
         AltinnGitRepositoryFactory altinnGitRepositoryFactory = new(TestDataHelper.GetTestDataRepositoriesRootDirectory());
         TextsService textsService = GetTextsServiceForTest();
-        await textsService.UpdateRelatedFiles(org, targetRepository, developer, keyMutations);
-        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, targetRepository, developer);
+        await textsService.UpdateRelatedFiles(new AltinnAppContext(org, targetRepository, developer), keyMutations);
+        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, targetRepository, developer));
         JsonNode formLayout1 = await altinnAppGitRepository.GetLayout(layoutSetName1, layoutName1);
         JsonNode formLayout2 = await altinnAppGitRepository.GetLayout(layoutSetName2, layoutName2);
 
@@ -92,8 +92,8 @@ public class TextsServiceTest : IDisposable
         CreatedTestRepoPath = await TestDataHelper.CopyRepositoryForTest(org, repository, developer, targetRepository);
         List<TextIdMutation> keyMutations = new() { new() { OldId = "some-old-id", NewId = "new-id" } };
 
-        await textsService.UpdateRelatedFiles(org, targetRepository, developer, keyMutations);
-        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, targetRepository, developer);
+        await textsService.UpdateRelatedFiles(new AltinnAppContext(org, targetRepository, developer), keyMutations);
+        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, targetRepository, developer));
         JsonNode formLayout = await altinnAppGitRepository.GetLayout(layoutSetName, layoutName);
 
         formLayout.Should().NotBeNull();
@@ -115,8 +115,8 @@ public class TextsServiceTest : IDisposable
         CreatedTestRepoPath = await TestDataHelper.CopyRepositoryForTest(org, repository, developer, targetRepository);
 
         List<TextIdMutation> keyMutations = new() { new() { OldId = "a-key-that-does-not-exist", NewId = "new-id" } };
-        await textsService.UpdateRelatedFiles(org, targetRepository, developer, keyMutations);
-        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, targetRepository, developer);
+        await textsService.UpdateRelatedFiles(new AltinnAppContext(org, targetRepository, developer), keyMutations);
+        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, targetRepository, developer));
         JsonNode formLayout = await altinnAppGitRepository.GetLayout(layoutSetName, layoutName);
 
         formLayout.Should().NotBeNull();
@@ -138,8 +138,8 @@ public class TextsServiceTest : IDisposable
         CreatedTestRepoPath = await TestDataHelper.CopyRepositoryForTest(org, repository, developer, targetRepository);
 
         List<TextIdMutation> keyMutations = new() { new() { OldId = "some-old-id" } };
-        await textsService.UpdateRelatedFiles(org, targetRepository, developer, keyMutations);
-        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, targetRepository, developer);
+        await textsService.UpdateRelatedFiles(new AltinnAppContext(org, targetRepository, developer), keyMutations);
+        AltinnAppGitRepository altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, targetRepository, developer));
         JsonNode formLayout = await altinnAppGitRepository.GetLayout(layoutSetName, layoutName);
 
         formLayout.Should().NotBeNull();

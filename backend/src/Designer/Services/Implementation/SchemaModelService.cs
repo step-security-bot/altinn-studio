@@ -74,25 +74,25 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public IList<AltinnCoreFile> GetSchemaFiles(string org, string repository, string developer, bool xsd = false)
+        public IList<AltinnCoreFile> GetSchemaFiles(AltinnAppContext altinnAppContext, bool xsd = false)
         {
-            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(org, repository, developer);
+            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(altinnAppContext);
 
             return altinnGitRepository.GetSchemaFiles(xsd);
         }
 
         /// <inheritdoc/>
-        public async Task<string> GetSchema(string org, string repository, string developer, string relativeFilePath)
+        public async Task<string> GetSchema(AltinnAppContext altinnAppContext, string relativeFilePath)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repository, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
 
             return await altinnAppGitRepository.ReadTextByRelativePathAsync(relativeFilePath);
         }
 
         /// <inheritdoc/>
-        public async Task UpdateSchema(string org, string repository, string developer, string relativeFilePath, string jsonContent, bool saveOnly = false)
+        public async Task UpdateSchema(AltinnAppContext altinnAppContext, string relativeFilePath, string jsonContent, bool saveOnly = false)
         {
-            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(org, repository, developer);
+            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(altinnAppContext);
             var jsonSchema = Json.Schema.JsonSchema.FromText(jsonContent);
             var serializedJsonContent = SerializeJson(jsonSchema);
             if (saveOnly)
@@ -113,13 +113,13 @@ namespace Altinn.Studio.Designer.Services.Implementation
                 return;
             }
 
-            await UpdateModelFilesFromJsonSchema(org, repository, developer, relativeFilePath, serializedJsonContent);
+            await UpdateModelFilesFromJsonSchema(altinnAppContext, relativeFilePath, serializedJsonContent);
         }
 
         /// <inheritdoc/>
-        public async Task<string> UpdateModelFilesFromJsonSchema(string org, string repository, string developer, string relativeFilePath, string jsonContent)
+        public async Task<string> UpdateModelFilesFromJsonSchema(AltinnAppContext altinnAppContext, string relativeFilePath, string jsonContent)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repository, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
             var schemaName = altinnAppGitRepository.GetSchemaName(relativeFilePath);
 
             var jsonSchema = Json.Schema.JsonSchema.FromText(jsonContent);
@@ -155,10 +155,10 @@ namespace Altinn.Studio.Designer.Services.Implementation
         /// <param name="fileName">The name of the file being uploaded.</param>
         /// <param name="xsdStream">Stream representing the XSD.</param>
         public async Task<string> BuildSchemaFromXsd(
-            string org, string repository, string developer, string fileName, Stream xsdStream)
+            AltinnAppContext altinnAppContext, string fileName, Stream xsdStream)
         {
             var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(
-                org, repository, developer);
+                altinnAppContext);
 
             MemoryStream xsdMemoryStream = new MemoryStream();
             xsdStream.CopyTo(xsdMemoryStream);
@@ -186,9 +186,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task<(string RelativePath, string JsonSchema)> CreateSchemaFromTemplate(string org, string repository, string developer, string schemaName, string relativeDirectory = "", bool altinn2Compatible = false)
+        public async Task<(string RelativePath, string JsonSchema)> CreateSchemaFromTemplate(AltinnAppContext altinnAppContext, string schemaName, string relativeDirectory = "", bool altinn2Compatible = false)
         {
-            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(org, repository, developer);
+            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(altinnAppContext);
 
             // In case of null being passed in we default it to an empty string as the default value
             // on the parameter does not apply if null is actually passed in.
@@ -196,7 +196,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
 
             if (await altinnGitRepository.GetRepositoryType() == AltinnRepositoryType.Datamodels)
             {
-                var uri = GetSchemaUri(org, repository, schemaName, relativeDirectory);
+                var uri = GetSchemaUri(altinnAppContext.Org, altinnAppContext.App, schemaName, relativeDirectory);
                 JsonTemplate jsonTemplate = altinn2Compatible ? new SeresJsonTemplate(uri, schemaName) : new GeneralJsonTemplate(uri, schemaName);
 
                 var jsonSchema = jsonTemplate.GetJsonString();
@@ -208,10 +208,10 @@ namespace Altinn.Studio.Designer.Services.Implementation
             }
             else
             {
-                var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repository, developer);
+                var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
 
                 var modelFolder = altinnAppGitRepository.GetRelativeModelFolder();
-                var uri = GetSchemaUri(org, repository, schemaName, modelFolder);
+                var uri = GetSchemaUri(altinnAppContext.Org, altinnAppContext.App, schemaName, modelFolder);
                 JsonTemplate jsonTemplate = altinn2Compatible ? new SeresJsonTemplate(uri, schemaName) : new GeneralJsonTemplate(uri, schemaName);
 
                 var jsonSchema = jsonTemplate.GetJsonString();
@@ -223,13 +223,13 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc/>
-        public async Task DeleteSchema(string org, string repository, string developer, string relativeFilePath)
+        public async Task DeleteSchema(AltinnAppContext altinnAppContext, string relativeFilePath)
         {
-            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(org, repository, developer);
+            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(altinnAppContext);
 
             if (await altinnGitRepository.GetRepositoryType() == AltinnRepositoryType.App)
             {
-                var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repository, developer);
+                var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
                 var altinnCoreFile = altinnGitRepository.GetAltinnCoreFileByRelativePath(relativeFilePath);
                 var schemaName = altinnGitRepository.GetSchemaName(relativeFilePath);
 

@@ -32,37 +32,34 @@ namespace Altinn.Studio.Designer.Services.Implementation
             _applicationMetadataService = applicationMetadataService;
         }
 
-        public async Task CreateLanguageResources(string org, string repo, string developer)
+        public async Task CreateLanguageResources(AltinnAppContext altinnAppContext)
         {
-            if (!string.IsNullOrEmpty(repo))
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
+            TextResource textResource = await altinnAppGitRepository.GetTextV1("nb");
+            if (textResource?.Resources == null)
             {
-                AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
-                TextResource textResource = await altinnAppGitRepository.GetTextV1("nb");
-                if (textResource?.Resources == null)
-                {
-                    textResource = new TextResource();
-                    textResource.Language = "nb";
-                    textResource.Resources = new List<TextResourceElement>();
-                }
-
-                textResource.Resources.Add(new TextResourceElement() { Id = "appName", Value = repo });
-                await altinnAppGitRepository.SaveTextV1("nb", textResource);
+                textResource = new TextResource();
+                textResource.Language = "nb";
+                textResource.Resources = new List<TextResourceElement>();
             }
+
+            textResource.Resources.Add(new TextResourceElement() { Id = "appName", Value = altinnAppContext.App });
+            await altinnAppGitRepository.SaveTextV1("nb", textResource);
         }
 
         /// <inheritdoc />
-        public List<string> GetLanguages(string org, string app, string developer)
+        public List<string> GetLanguages(AltinnAppContext altinnAppContext)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
             List<string> languages = altinnAppGitRepository.GetLanguages();
 
             return languages;
         }
 
         /// <inheritdoc />
-        public async Task<TextResource> GetTextV1(string org, string repo, string developer, string languageCode)
+        public async Task<TextResource> GetTextV1(AltinnAppContext altinnAppContext, string languageCode)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
 
             TextResource texts = await altinnAppGitRepository.GetTextV1(languageCode);
 
@@ -70,9 +67,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task SaveTextV1(string org, string repo, string developer, TextResource textResource, string languageCode)
+        public async Task SaveTextV1(AltinnAppContext altinnAppContext, TextResource textResource, string languageCode)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
 
             string[] duplicateKeys = textResource.Resources.GroupBy(tre => tre.Id).Where(grp => grp.Count() > 1).Select(grp => grp.Key).ToArray();
             if (duplicateKeys.Length > 0)
@@ -85,7 +82,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
 
             if (appTitleResourceElement != null && !string.IsNullOrEmpty(appTitleResourceElement.Value))
             {
-                await _applicationMetadataService.UpdateAppTitleInAppMetadata(org, repo, "nb", appTitleResourceElement.Value);
+                await _applicationMetadataService.UpdateAppTitleInAppMetadata(altinnAppContext.Org, altinnAppContext.App, "nb", appTitleResourceElement.Value);
             }
             else
             {
@@ -96,9 +93,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task<Dictionary<string, string>> GetTextsV2(string org, string repo, string developer, string languageCode)
+        public async Task<Dictionary<string, string>> GetTextsV2(AltinnAppContext altinnAppContext, string languageCode)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
 
             Dictionary<string, string> jsonTexts = await altinnAppGitRepository.GetTextsV2(languageCode);
 
@@ -114,14 +111,14 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task<List<string>> GetKeys(string org, string repo, string developer, IList<string> languages)
+        public async Task<List<string>> GetKeys(AltinnAppContext altinnAppContext, IList<string> languages)
         {
             if (languages.IsNullOrEmpty())
             {
                 throw new FileNotFoundException();
             }
 
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
             Dictionary<string, string> firstJsonTexts = await altinnAppGitRepository.GetTextsV2(languages[0]);
             languages.RemoveAt(0);
             List<string> allKeys = firstJsonTexts.Keys.ToList();
@@ -136,9 +133,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task UpdateTexts(string org, string repo, string developer, string languageCode, Dictionary<string, string> jsonTexts)
+        public async Task UpdateTexts(AltinnAppContext altinnAppContext, string languageCode, Dictionary<string, string> jsonTexts)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
 
             (Dictionary<string, string>, Dictionary<string, string>) extractMarkdown = ExtractMarkdown(languageCode, jsonTexts);
 
@@ -151,17 +148,17 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public void DeleteTexts(string org, string repo, string developer, string languageCode)
+        public void DeleteTexts(AltinnAppContext altinnAppContext, string languageCode)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
 
             altinnAppGitRepository.DeleteTexts(languageCode);
         }
 
         /// <inheritdoc />
-        public async Task ConvertV1TextsToV2(string org, string repo, string developer)
+        public async Task ConvertV1TextsToV2(AltinnAppContext altinnAppContext)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
 
             IEnumerable<string> languageFiles = altinnAppGitRepository.FindFiles(new[] { "resource.*.json" });
 
@@ -191,15 +188,15 @@ namespace Altinn.Studio.Designer.Services.Implementation
                     await altinnAppGitRepository.SaveTextMarkdown(languageCode, text);
                 }
 
-                await UpdateTexts(org, repo, developer, languageCode, extractMarkdown.Texts);
+                await UpdateTexts(altinnAppContext, languageCode, extractMarkdown.Texts);
 
                 altinnAppGitRepository.DeleteFileByAbsolutePath(languageFile);
             }
         }
 
-        public async Task UpdateTextsForKeys(string org, string repo, string developer, Dictionary<string, string> keysTexts, string languageCode)
+        public async Task UpdateTextsForKeys(AltinnAppContext altinnAppContext, Dictionary<string, string> keysTexts, string languageCode)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
             TextResource textResourceObject = await altinnAppGitRepository.GetTextV1(languageCode);
 
             // handle if file not already exist
@@ -235,14 +232,14 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task<string> UpdateKey(string org, string repo, string developer, IList<string> languages, string oldKey, string newKey)
+        public async Task<string> UpdateKey(AltinnAppContext altinnAppContext, IList<string> languages, string oldKey, string newKey)
         {
             if (languages.IsNullOrEmpty())
             {
                 throw new FileNotFoundException();
             }
 
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, repo, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
             Dictionary<string, Dictionary<string, string>> tempUpdatedTexts = new(languages.Count);
             bool oldKeyExistsOriginally = false;
             string response = string.Empty;
@@ -288,23 +285,23 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task UpdateRelatedFiles(string org, string app, string developer, List<TextIdMutation> keyMutations)
+        public async Task UpdateRelatedFiles(AltinnAppContext altinnAppContext, List<TextIdMutation> keyMutations)
         {
             // handle if no layout exists
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
             string[] layoutSetNames = altinnAppGitRepository.GetLayoutSetNames();
 
             if (altinnAppGitRepository.AppUsesLayoutSets())
             {
                 foreach (string layoutSetName in layoutSetNames)
                 {
-                    await UpdateKeysInLayoutsInLayoutSet(org, app, developer, layoutSetName, keyMutations);
+                    await UpdateKeysInLayoutsInLayoutSet(altinnAppContext, layoutSetName, keyMutations);
                 }
 
                 return;
             }
 
-            await UpdateKeysInLayoutsInLayoutSet(org, app, developer, null, keyMutations);
+            await UpdateKeysInLayoutsInLayoutSet(altinnAppContext, null, keyMutations);
         }
 
         /// <summary>
@@ -315,9 +312,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         /// <param name="developer">Username of developer</param>
         /// <param name="layoutSetName">Name of the layoutset</param>
         /// <param name="keyMutations">A list of the keys that are updated</param>
-        private async Task UpdateKeysInLayoutsInLayoutSet(string org, string app, string developer, string layoutSetName, List<TextIdMutation> keyMutations)
+        private async Task UpdateKeysInLayoutsInLayoutSet(AltinnAppContext altinnAppContext, string layoutSetName, List<TextIdMutation> keyMutations)
         {
-            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            var altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext);
             string[] layoutNames = altinnAppGitRepository.GetLayoutNames(layoutSetName);
             foreach (string layoutName in layoutNames)
             {

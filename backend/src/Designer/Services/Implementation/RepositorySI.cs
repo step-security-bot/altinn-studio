@@ -355,7 +355,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
                 // This creates all files
                 CreateServiceMetadata(metadata);
                 await _applicationMetadataService.CreateApplicationMetadata(org, serviceConfig.RepositoryName, serviceConfig.ServiceName);
-                await _textsService.CreateLanguageResources(org, serviceConfig.RepositoryName, developer);
+                await _textsService.CreateLanguageResources( new AltinnAppContext(org, serviceConfig.RepositoryName, developer));
                 await CreateRepositorySettings(org, serviceConfig.RepositoryName, developer);
 
                 CommitInfo commitInfo = new() { Org = org, Repository = serviceConfig.RepositoryName, Message = "App created" };
@@ -368,7 +368,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
 
         private async Task CreateRepositorySettings(string org, string repository, string developer)
         {
-            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(org, repository, developer);
+            var altinnGitRepository = _altinnGitRepositoryFactory.GetAltinnGitRepository(new AltinnAppContext(org, repository, developer));
             var settings = new AltinnStudioSettings() { RepoType = AltinnRepositoryType.App };
             await altinnGitRepository.SaveAltinnStudioSettings(settings);
         }
@@ -393,7 +393,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
             }
 
             _sourceControl.CloneRemoteRepository(org, sourceRepository, targetRepositoryPath);
-            var targetAppRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, targetRepository, developer);
+            var targetAppRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, targetRepository, developer));
 
             await targetAppRepository.SearchAndReplaceInFile(".git/config", $"repos/{org}/{sourceRepository}.git", $"repos/{org}/{targetRepository}.git");
 
@@ -415,7 +415,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
             await _sourceControl.CreateBranch(org, targetRepository, branchName);
             _sourceControl.CloneRemoteRepository(org, targetRepository, _settings.GetServicePath(org, branchCloneName, developer), branchName);
 
-            var branchAppRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, branchCloneName, developer);
+            var branchAppRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, branchCloneName, developer));
 
             await branchAppRepository.SearchAndReplaceInFile("App/config/authorization/policy.xml", $"{sourceRepository}", $"{targetRepository}");
 

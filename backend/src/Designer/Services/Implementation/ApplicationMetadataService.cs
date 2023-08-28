@@ -11,6 +11,7 @@ using Altinn.Platform.Storage.Interface.Models;
 using Altinn.Studio.Designer.Configuration;
 using Altinn.Studio.Designer.Helpers;
 using Altinn.Studio.Designer.Infrastructure.GitRepository;
+using Altinn.Studio.Designer.Models;
 using Altinn.Studio.Designer.Services.Interfaces;
 using Altinn.Studio.Designer.TypedHttpClients.AltinnStorage;
 using Altinn.Studio.Designer.TypedHttpClients.Exceptions;
@@ -79,7 +80,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
         public async Task UpdateApplicationMetaDataLocally(string org, string app, Application applicationMetadata)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             await altinnAppGitRepository.SaveApplicationMetadata(applicationMetadata);
         }
 
@@ -87,7 +88,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
         public async Task<ServiceConfiguration> GetAppMetadataConfigAsync(string org, string app)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             try
             {
                 ServiceConfiguration serviceConfiguration = await altinnAppGitRepository.GetAppMetadataConfig();
@@ -104,7 +105,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
         public async Task UpdateAppMetadataConfigAsync(string org, string app, ServiceConfiguration serviceConfiguration)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             await altinnAppGitRepository.SaveAppMetadataConfig(serviceConfiguration);
         }
 
@@ -222,7 +223,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
         public async Task<Application> GetApplicationMetadataFromRepository(string org, string app)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             Application applicationMetadata = await altinnAppGitRepository.GetApplicationMetadata();
             return applicationMetadata;
         }
@@ -257,7 +258,7 @@ namespace Altinn.Studio.Designer.Services.Implementation
         public bool ApplicationMetadataExistsInRepository(string org, string app)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, app, developer));
             return altinnAppGitRepository.ApplicationMetadataExists();
         }
 

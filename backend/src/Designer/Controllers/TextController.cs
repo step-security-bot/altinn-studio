@@ -65,7 +65,7 @@ namespace Altinn.Studio.Designer.Controllers
         public IActionResult Index(string org, string app)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            IList<string> languages = _textsService.GetLanguages(org, app, developer);
+            IList<string> languages = _textsService.GetLanguages(new AltinnAppContext(org, app, developer));
 
             if (Request.Headers["accept"] == "application/json")
             {
@@ -87,7 +87,7 @@ namespace Altinn.Studio.Designer.Controllers
         public IActionResult GetLanguages(string org, string app)
         {
             string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-            List<string> languages = _textsService.GetLanguages(org, app, developer);
+            List<string> languages = _textsService.GetLanguages(new AltinnAppContext(org, app, developer));
             return Json(languages);
         }
 
@@ -105,7 +105,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-                TextResource textResource = await _textsService.GetTextV1(org, app, developer, languageCode);
+                TextResource textResource = await _textsService.GetTextV1(new AltinnAppContext(org, app, developer), languageCode);
                 return Ok(textResource);
             }
             catch (NotFoundException)
@@ -130,7 +130,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-                await _textsService.SaveTextV1(org, app, developer, jsonData, languageCode);
+                await _textsService.SaveTextV1(new AltinnAppContext(org, app, developer), jsonData, languageCode);
                 return Ok($"Text resource, resource.{languageCode}.json, was successfully saved.");
             }
             catch (ArgumentException e)
@@ -160,7 +160,7 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-                await _textsService.UpdateTextsForKeys(org, app, developer, keysTexts, languageCode);
+                await _textsService.UpdateTextsForKeys(new AltinnAppContext(org, app, developer), keysTexts, languageCode);
                 return Ok($"The text resource, resource.{languageCode}.json, was updated.");
 
             }
@@ -190,10 +190,10 @@ namespace Altinn.Studio.Designer.Controllers
             try
             {
                 string developer = AuthenticationHelper.GetDeveloperUserName(_httpContextAccessor.HttpContext);
-                IList<string> langCodes = _textsService.GetLanguages(org, app, developer);
+                IList<string> langCodes = _textsService.GetLanguages(new AltinnAppContext(org, app, developer));
                 foreach (string languageCode in langCodes)
                 {
-                    TextResource textResourceObject = await _textsService.GetTextV1(org, app, developer, languageCode);
+                    TextResource textResourceObject = await _textsService.GetTextV1(new AltinnAppContext(org, app, developer), languageCode);
 
                     foreach (TextIdMutation m in mutations)
                     {
@@ -223,9 +223,9 @@ namespace Altinn.Studio.Designer.Controllers
                         mutationHasOccured = true;
                     }
 
-                    await _textsService.UpdateRelatedFiles(org, app, developer, mutations);
+                    await _textsService.UpdateRelatedFiles(new AltinnAppContext(org, app, developer), mutations);
 
-                    await _textsService.SaveTextV1(org, app, developer, textResourceObject, languageCode);
+                    await _textsService.SaveTextV1(new AltinnAppContext(org, app, developer), textResourceObject, languageCode);
                 }
             }
             catch (ArgumentException exception)

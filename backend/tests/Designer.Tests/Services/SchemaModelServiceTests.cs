@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using System.Xml.Schema;
 using Altinn.Studio.DataModeling.Json.Keywords;
 using Altinn.Studio.Designer.Factories;
+using Altinn.Studio.Designer.Models;
 using Altinn.Studio.Designer.Services.Implementation;
 using Altinn.Studio.Designer.Services.Interfaces;
 using Designer.Tests.Utils;
@@ -34,19 +35,19 @@ namespace Designer.Tests.Services
                 var altinnGitRepositoryFactory = new AltinnGitRepositoryFactory(TestDataHelper.GetTestDataRepositoriesRootDirectory());
 
                 ISchemaModelService schemaModelService = new SchemaModelService(altinnGitRepositoryFactory, TestDataHelper.LogFactory, TestDataHelper.ServiceRepositorySettings, TestDataHelper.XmlSchemaToJsonSchemaConverter, TestDataHelper.JsonSchemaToXmlSchemaConverter, TestDataHelper.ModelMetadataToCsharpConverter);
-                var schemaFiles = schemaModelService.GetSchemaFiles(org, targetRepository, developer);
+                var schemaFiles = schemaModelService.GetSchemaFiles(new AltinnAppContext(org, targetRepository, developer));
                 schemaFiles.Should().HaveCount(7);
 
-                var altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, targetRepository, developer);
+                var altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, targetRepository, developer));
                 var applicationMetadata = await altinnAppGitRepository.GetApplicationMetadata();
                 applicationMetadata.DataTypes.Should().HaveCount(2);
 
                 // Act
                 var schemaToDelete = schemaFiles.First(s => s.FileName == "Kursdomene_HvemErHvem_M_2021-04-08_5742_34627_SERES.schema.json");
-                await schemaModelService.DeleteSchema(org, targetRepository, developer, schemaToDelete.RepositoryRelativeUrl);
+                await schemaModelService.DeleteSchema(new AltinnAppContext(org, targetRepository, developer), schemaToDelete.RepositoryRelativeUrl);
 
                 // Assert
-                schemaFiles = schemaModelService.GetSchemaFiles(org, targetRepository, developer);
+                schemaFiles = schemaModelService.GetSchemaFiles(new AltinnAppContext(org, targetRepository, developer));
                 schemaFiles.Should().HaveCount(6);
                 applicationMetadata = await altinnAppGitRepository.GetApplicationMetadata();
                 applicationMetadata.DataTypes.Should().HaveCount(1);
@@ -72,15 +73,15 @@ namespace Designer.Tests.Services
                 var altinnGitRepositoryFactory = new AltinnGitRepositoryFactory(TestDataHelper.GetTestDataRepositoriesRootDirectory());
 
                 ISchemaModelService schemaModelService = new SchemaModelService(altinnGitRepositoryFactory, TestDataHelper.LogFactory, TestDataHelper.ServiceRepositorySettings, TestDataHelper.XmlSchemaToJsonSchemaConverter, TestDataHelper.JsonSchemaToXmlSchemaConverter, TestDataHelper.ModelMetadataToCsharpConverter);
-                var schemaFiles = schemaModelService.GetSchemaFiles(org, targetRepository, developer);
+                var schemaFiles = schemaModelService.GetSchemaFiles(new AltinnAppContext(org, targetRepository, developer));
                 schemaFiles.Should().HaveCount(6);
 
                 // Act
                 var schemaToDelete = schemaFiles.First(s => s.FileName == "Kursdomene_HvemErHvem_M_2021-04-08_5742_34627_SERES.schema.json");
-                await schemaModelService.DeleteSchema(org, targetRepository, developer, schemaToDelete.RepositoryRelativeUrl);
+                await schemaModelService.DeleteSchema(new AltinnAppContext(org, targetRepository, developer), schemaToDelete.RepositoryRelativeUrl);
 
                 // Assert
-                schemaFiles = schemaModelService.GetSchemaFiles(org, targetRepository, developer);
+                schemaFiles = schemaModelService.GetSchemaFiles(new AltinnAppContext(org, targetRepository, developer));
                 schemaFiles.Should().HaveCount(5);
             }
             finally
@@ -106,10 +107,10 @@ namespace Designer.Tests.Services
                 // Act
                 ISchemaModelService schemaModelService = new SchemaModelService(altinnGitRepositoryFactory, TestDataHelper.LogFactory, TestDataHelper.ServiceRepositorySettings, TestDataHelper.XmlSchemaToJsonSchemaConverter, TestDataHelper.JsonSchemaToXmlSchemaConverter, TestDataHelper.ModelMetadataToCsharpConverter);
                 var expectedSchemaUpdates = @"{""properties"":{""root"":{""$ref"":""#/definitions/rootType""}},""definitions"":{""rootType"":{""properties"":{""keyword"":{""type"":""string""}}}}}";
-                await schemaModelService.UpdateSchema(org, targetRepository, developer, $"App/models/HvemErHvem_SERES.schema.json", expectedSchemaUpdates);
+                await schemaModelService.UpdateSchema(new AltinnAppContext(org, targetRepository, developer), $"App/models/HvemErHvem_SERES.schema.json", expectedSchemaUpdates);
 
                 // Assert
-                var altinnGitRepository = altinnGitRepositoryFactory.GetAltinnGitRepository(org, targetRepository, developer);
+                var altinnGitRepository = altinnGitRepositoryFactory.GetAltinnGitRepository(new AltinnAppContext(org, targetRepository, developer));
 
                 var updatedSchema = await altinnGitRepository.ReadTextByRelativePathAsync("App/models/HvemErHvem_SERES.schema.json");
                 string serializedExpectedSchemaUpdates = FormatJsonString(updatedSchema);
@@ -171,7 +172,7 @@ namespace Designer.Tests.Services
                 var schemaName = "SimpleInvalidNonSeresSchema";
                 var fileName = $"{schemaName}.xsd";
 
-                Func<Task> action = () => schemaModelService.BuildSchemaFromXsd(org, targetRepository, developer, fileName, xsdStream);
+                Func<Task> action = () => schemaModelService.BuildSchemaFromXsd(new AltinnAppContext(org, targetRepository, developer), fileName, xsdStream);
 
                 // Act/assert
                 await action.Should().ThrowAsync<XmlSchemaException>();
@@ -205,10 +206,10 @@ namespace Designer.Tests.Services
                 var relativeFilePath = $"{relativeDirectory}/{fileName}";
 
                 // Act
-                var jsonSchema = await schemaModelService.BuildSchemaFromXsd(org, targetRepository, developer, fileName, xsdStream);
+                var jsonSchema = await schemaModelService.BuildSchemaFromXsd(new AltinnAppContext(org, targetRepository, developer), fileName, xsdStream);
 
                 // Assert
-                var altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, targetRepository, developer);
+                var altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, targetRepository, developer));
                 altinnAppGitRepository.FileExistsByRelativePath($"{relativeDirectory}/{schemaName}.metadata.json").Should().BeTrue();
                 altinnAppGitRepository.FileExistsByRelativePath($"{relativeDirectory}/{schemaName}.schema.json").Should().BeTrue();
                 altinnAppGitRepository.FileExistsByRelativePath($"{relativeDirectory}/{schemaName}.cs").Should().BeTrue();
@@ -242,10 +243,10 @@ namespace Designer.Tests.Services
                 var relativeFilePath = $"{relativeDirectory}/{fileName}";
 
                 // Act
-                var jsonSchema = await schemaModelService.BuildSchemaFromXsd(org, targetRepository, developer, fileName, xsdStream);
+                var jsonSchema = await schemaModelService.BuildSchemaFromXsd(new AltinnAppContext(org, targetRepository, developer), fileName, xsdStream);
 
                 // Assert
-                var altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, targetRepository, developer);
+                var altinnAppGitRepository = altinnGitRepositoryFactory.GetAltinnAppGitRepository(new AltinnAppContext(org, targetRepository, developer));
                 altinnAppGitRepository.FileExistsByRelativePath($"{relativeDirectory}/{schemaName}.metadata.json").Should().BeTrue();
                 altinnAppGitRepository.FileExistsByRelativePath($"{relativeDirectory}/{schemaName}.schema.json").Should().BeTrue();
                 altinnAppGitRepository.FileExistsByRelativePath($"{relativeDirectory}/{schemaName}.xsd").Should().BeTrue();
