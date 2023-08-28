@@ -4,6 +4,9 @@ using Altinn.Studio.Designer.Helpers;
 
 namespace Altinn.Studio.Designer.Models
 {
+    /// <summary>
+    /// Context of an app. Holding information about org, app and developer
+    /// </summary>
     public class AltinnAppContext
     {
         public string Org { get; }

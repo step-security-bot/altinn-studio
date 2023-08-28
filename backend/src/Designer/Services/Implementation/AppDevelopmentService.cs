@@ -26,9 +26,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task<Dictionary<string, JsonNode>> GetFormLayouts(string org, string app, string developer, string layoutSetName)
+        public async Task<Dictionary<string, JsonNode>> GetFormLayouts(AltinnAppContext appContext, string layoutSetName)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets && string.IsNullOrEmpty(layoutSetName))
             {
@@ -40,10 +40,10 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task SaveFormLayout(string org, string app, string developer, string layoutSetName, string layoutName, JsonNode formLayout)
+        public async Task SaveFormLayout(AltinnAppContext appContext, string layoutSetName, string layoutName, JsonNode formLayout)
         {
             string layoutFileName = $"{layoutName}.json";
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets && string.IsNullOrEmpty(layoutSetName))
             {
@@ -54,10 +54,10 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public void DeleteFormLayout(string org, string app, string developer, string layoutSetName, string layoutName)
+        public void DeleteFormLayout(AltinnAppContext appContext, string layoutSetName, string layoutName)
         {
             string layoutFileName = $"{layoutName}.json";
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets && string.IsNullOrEmpty(layoutSetName))
             {
@@ -68,9 +68,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public void UpdateFormLayoutName(string org, string app, string developer, string layoutSetName, string layoutName, string newName)
+        public void UpdateFormLayoutName(AltinnAppContext appContext, string layoutSetName, string layoutName, string newName)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets && string.IsNullOrEmpty(layoutSetName))
             {
@@ -81,9 +81,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task<JsonNode> GetLayoutSettings(string org, string app, string developer, string layoutSetName)
+        public async Task<JsonNode> GetLayoutSettings(AltinnAppContext appContext, string layoutSetName)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets && string.IsNullOrEmpty(layoutSetName))
             {
@@ -95,9 +95,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task SaveLayoutSettings(string org, string app, string developer, JsonNode layoutSettings, string layoutSetName)
+        public async Task SaveLayoutSettings(AltinnAppContext appContext, JsonNode layoutSettings, string layoutSetName)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets)
             {
@@ -107,9 +107,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
             await altinnAppGitRepository.SaveLayoutSettings(null, layoutSettings);
         }
 
-        public async Task<LayoutSets> GetLayoutSets(string org, string app, string developer)
+        public async Task<LayoutSets> GetLayoutSets(AltinnAppContext appContext)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets)
             {
@@ -121,9 +121,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
             return null;
         }
 
-        public async Task<LayoutSets> ConfigureLayoutSet(string org, string app, string developer, string layoutSetName)
+        public async Task<LayoutSets> ConfigureLayoutSet(AltinnAppContext appContext, string layoutSetName)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets)
             {
@@ -136,9 +136,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
             return layoutSets;
         }
 
-        public async Task AddLayoutSet(string org, string app, string developer, LayoutSetConfig layoutSet)
+        public async Task AddLayoutSet(AltinnAppContext appContext, LayoutSetConfig layoutSet)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets)
             {
@@ -151,9 +151,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task<string> GetRuleHandler(string org, string app, string developer, string layoutSetName)
+        public async Task<string> GetRuleHandler(AltinnAppContext appContext, string layoutSetName)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets && string.IsNullOrEmpty(layoutSetName))
             {
@@ -165,9 +165,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task SaveRuleHandler(string org, string app, string developer, string ruleHandler, string layoutSetName)
+        public async Task SaveRuleHandler(AltinnAppContext appContext, string ruleHandler, string layoutSetName)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets && string.IsNullOrEmpty(layoutSetName))
             {
@@ -177,9 +177,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task<string> GetRuleConfigAndAddDataToRootIfNotAlreadyPresent(string org, string app, string developer, string layoutSetName)
+        public async Task<string> GetRuleConfigAndAddDataToRootIfNotAlreadyPresent(AltinnAppContext appContext, string layoutSetName)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(appContext.Org, appContext.App, appContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets && string.IsNullOrEmpty(layoutSetName))
             {
@@ -191,9 +191,9 @@ namespace Altinn.Studio.Designer.Services.Implementation
         }
 
         /// <inheritdoc />
-        public async Task SaveRuleConfig(string org, string app, string developer, JsonNode ruleConfig, string layoutSetName)
+        public async Task SaveRuleConfig(AltinnAppContext altinnAppContext, JsonNode ruleConfig, string layoutSetName)
         {
-            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(org, app, developer);
+            AltinnAppGitRepository altinnAppGitRepository = _altinnGitRepositoryFactory.GetAltinnAppGitRepository(altinnAppContext.Org, altinnAppContext.App, altinnAppContext.Developer);
             bool appUsesLayoutSets = altinnAppGitRepository.AppUsesLayoutSets();
             if (appUsesLayoutSets && string.IsNullOrEmpty(layoutSetName))
             {
