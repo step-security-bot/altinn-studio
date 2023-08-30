@@ -13,7 +13,7 @@ import {
 } from '../../types/Expressions';
 import {
   complexExpressionIsSet,
-  convertExpressionToExternalFormat,
+  convertInternalExpressionToExternal,
   convertExternalExpressionToInternal,
   tryParseString
 } from '../../utils/expressionsUtils';
@@ -46,9 +46,10 @@ export const Expressions = ({ onShowNewExpressions, showNewExpressions }: Expres
     (Object.values(ExpressionPropertyBase) as string[])
       .concat(Object.values(ExpressionPropertyForGroup) as string[]) : Object.values(ExpressionPropertyBase));
 
+  const propertiesWithExpressions: (ExpressionPropertyBase | ExpressionPropertyForGroup)[] | undefined = expressionProperties && Object.keys(form).filter(property => expressionProperties.includes(property)).map(property => property as ExpressionPropertyBase | ExpressionPropertyForGroup);
+
   useEffect(() => {
     if (form) {
-      const propertiesWithExpressions: (ExpressionPropertyBase | ExpressionPropertyForGroup)[] | undefined = expressionProperties && Object.keys(form).filter(property => expressionProperties.includes(property)).map(property => property as ExpressionPropertyBase | ExpressionPropertyForGroup);
       const potentialConvertedExternalExpressions: Expression[] = propertiesWithExpressions?.filter(property => typeof form[property] !== 'boolean')?.map(property => convertExternalExpressionToInternal(property, form[property]));
       const defaultExpression: Expression = { id: uuidv4(), editMode: true, subExpressions: [] };
       const defaultExpressions = potentialConvertedExternalExpressions?.length === 0 ? [defaultExpression] : potentialConvertedExternalExpressions;
@@ -70,7 +71,7 @@ export const Expressions = ({ onShowNewExpressions, showNewExpressions }: Expres
       }
       if (prevExpression.property && prevExpression.editMode) {
         // TODO: What if expression is invalid format? Have some way to validate with app-frontend dev-tools. Issue #10859
-        form[prevExpression.property] = convertExpressionToExternalFormat(prevExpression);
+        form[prevExpression.property] = convertInternalExpressionToExternal(prevExpression);
         try {
           await updateFormComponent({ updatedComponent: form as FormComponent, id: formId });
           successfullyAddedExpressionIdRef.current = prevExpression.id;
