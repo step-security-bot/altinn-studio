@@ -14,6 +14,9 @@ on:
   schedule:
     - cron: "55 4 * * 6"
 
+permissions:
+  contents: read
+
 jobs:
   analyze:
     name: Analyze
@@ -27,19 +30,24 @@ jobs:
       fail-fast: false
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@8ca2b8b2ece13480cda6dacd3511b49857a23c09 # v2.5.1
+        with:
+          egress-policy: audit
+
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@v2
+        uses: github/codeql-action/init@ddccb873888234080b77e9bc2d4764d5ccaaccf9 # v2.21.9
         with:
           languages: csharp
           queries: +security-and-quality
 
       - name: Autobuild
-        uses: github/codeql-action/autobuild@v2
+        uses: github/codeql-action/autobuild@ddccb873888234080b77e9bc2d4764d5ccaaccf9 # v2.21.9
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v2
+        uses: github/codeql-action/analyze@ddccb873888234080b77e9bc2d4764d5ccaaccf9 # v2.21.9
         with:
           category: "/language:csharp"

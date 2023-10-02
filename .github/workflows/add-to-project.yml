@@ -5,12 +5,20 @@ on:
     types:
       - opened
 
+permissions:
+  contents: read
+
 jobs:
   add-to-project:
     name: Add issue to Team Studio project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@main
+      - name: Harden Runner
+        uses: step-security/harden-runner@8ca2b8b2ece13480cda6dacd3511b49857a23c09 # v2.5.1
+        with:
+          egress-policy: audit
+
+      - uses: actions/add-to-project@d8e41a41861baa4c7af88a39f7692681e89f6668 # main
         with:
           project-url: https://github.com/orgs/Altinn/projects/36
           github-token: ${{ secrets.ASSIGN_PROJECT_TOKEN }}
