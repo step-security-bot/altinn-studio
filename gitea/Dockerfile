@@ -1,4 +1,4 @@
-FROM gitea/gitea:1.20.4-rootless
+FROM gitea/gitea:1.20.4-rootless@sha256:578d58d5042cf006dd98cbee0d75db18097c4a36a2d3de738a8a7ed7d66b2c52
 USER 0:0
 RUN apk --no-cache upgrade expat git libxml2 libcurl curl
 USER 1000:1000

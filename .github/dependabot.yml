@@ -1,0 +1,166 @@
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /backend/PolicyAdmin
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /backend/src/DataModeling
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /backend/src/Designer
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /backend/tests/DataModeling.Tests
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /backend/tests/Designer.Tests
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /backend/tests/SharedResources.Tests
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /development/azure-devops-mock
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /development/azure-devops-mock
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/app-development
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/app-preview
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/dashboard
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/language
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/packages/policy-editor
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/packages/process-editor
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/packages/schema-editor
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/packages/schema-model
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/packages/shared
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/packages/text-editor
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/packages/ux-editor
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/resourceadm
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/testing/cypress
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /frontend/testing/mockend
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /gitea
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Altinn.Common/Altinn.EFormidlingClient/Altinn.EFormidlingClient.Tests
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /src/Altinn.Common/Altinn.EFormidlingClient/Altinn.EFormidlingClient
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /src/Altinn.Platform/Altinn.Platform.PDF
+    schedule:
+      interval: daily
+
+  - package-ecosystem: npm
+    directory: /src/test/K6
+    schedule:
+      interval: daily
+
+  - package-ecosystem: nuget
+    directory: /testdata/AppTemplates/AspNet/App
+    schedule:
+      interval: daily
+
+  - package-ecosystem: docker
+    directory: /testdata/AppTemplates/AspNet
+    schedule:
+      interval: daily
+
+  - package-ecosystem: maven
+    directory: /src/Altinn.Platform/Altinn.Platform.PDF
+    schedule:
+      interval: daily

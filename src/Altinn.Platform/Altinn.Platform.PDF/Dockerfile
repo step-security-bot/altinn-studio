@@ -1,11 +1,11 @@
-FROM maven:3.8.5-openjdk-17 AS build
+FROM maven:3.8.5-openjdk-17@sha256:3a9c30b3af6278a8ae0007d3a3bf00fff80ec3ed7ae4eb9bfa1772853101549b AS build
 WORKDIR /build
 COPY pom.xml .
 RUN mvn -B dependency:go-offline
 COPY src src
 RUN mvn -Pprod package
 
-FROM mcr.microsoft.com/openjdk/jdk:17-ubuntu AS final
+FROM mcr.microsoft.com/openjdk/jdk:17-ubuntu@sha256:71801b58acb3a6b15de1e60be6486c0174196863a755f328c726bf85a3b20aac AS final
 WORKDIR /app
 COPY --from=build /build/target .
 # setup the user and group

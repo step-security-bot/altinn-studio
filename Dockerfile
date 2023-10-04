@@ -1,5 +1,5 @@
 # Building studio frontend
-FROM node:20.5.1-alpine AS generate-studio-frontend
+FROM node:20.5.1-alpine@sha256:f62abc08fe1004555c4f28b6793af8345a76230b21d2d249976f329079e2fef2 AS generate-studio-frontend
 WORKDIR /build
 COPY . .
 RUN corepack enable
@@ -7,7 +7,7 @@ RUN yarn --immutable
 RUN yarn build
 
 # Building the backend
-FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine AS generate-studio-backend
+FROM mcr.microsoft.com/dotnet/sdk:6.0-alpine@sha256:ee3bb1abb7ab8b485ce735185a39269f7e94929185f0b4a481974db82a0f6626 AS generate-studio-backend
 WORKDIR /build
 COPY backend .
 RUN dotnet build src/Designer/Designer.csproj -c Release -o /app_output
@@ -19,7 +19,7 @@ RUN apk add jq zip
 RUN wget -O - https://api.github.com/repos/Altinn/app-template-dotnet/releases/latest | jq '.assets[]|select(.name | startswith("app-template-dotnet-") and endswith(".zip"))' | jq '.browser_download_url' | xargs wget -O apptemplate.zip && unzip apptemplate.zip && rm apptemplate.zip
 
 # Building the final image
-FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine AS final
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-alpine@sha256:d3e9dbdaa2795845c1a99c6b9ac35a584f7a8d64f770a2c57bb89fe0ab5742e7 AS final
 EXPOSE 80
 WORKDIR /app
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false \
