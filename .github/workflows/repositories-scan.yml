@@ -8,11 +8,16 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
+    - name: Harden Runner
+      uses: step-security/harden-runner@1b05615854632b887b69ae1be8cbefe72d3ae423 # v2.6.0
+      with:
+        egress-policy: audit
+
+    - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
     - name: Build the Docker image
       run: docker build ./gitea --tag altinn-repos:${{github.sha}}
 
-    - uses: Azure/container-scan@v0
+    - uses: Azure/container-scan@f9af925b897d8af5f7e0026b8bca9346261abc93 # v0.1
       env:
         # See https://github.com/goodwithtech/dockle/issues/188
         DOCKLE_HOST: "unix:///var/run/docker.sock"

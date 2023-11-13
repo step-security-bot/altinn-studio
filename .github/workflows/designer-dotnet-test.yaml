@@ -13,6 +13,9 @@ on:
       - 'testdata/**'
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   analyze:
     strategy:
@@ -23,12 +26,17 @@ jobs:
     env:
       DOTNET_HOSTBUILDER__RELOADCONFIGONCHANGE: false
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@1b05615854632b887b69ae1be8cbefe72d3ae423 # v2.6.0
+        with:
+          egress-policy: audit
+
       - name: Setup .NET
-        uses: actions/setup-dotnet@v3
+        uses: actions/setup-dotnet@3447fd6a9f9e57506b15f895c5b76d3b197dc7c2 # v3.2.0
         with:
           dotnet-version: |
             6.0.x
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
       - name: Build

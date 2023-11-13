@@ -8,8 +8,14 @@ on:
       - 'frontend/**'
       - '.github/workflows/cypress.yml'
 
+permissions:
+  contents: read
+
 jobs:
   cypress-run:
+    permissions:
+      actions: read  # for cypress-io/github-action to correctly identify workflow run
+      contents: read  # for actions/checkout to fetch code
     runs-on: ubuntu-latest
     # Runs tests in parallel with matrix strategy https://docs.cypress.io/guides/guides/parallelization
     # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
@@ -19,19 +25,24 @@ jobs:
       matrix:
         containers: [1] # No parallelization
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@1b05615854632b887b69ae1be8cbefe72d3ae423 # v2.6.0
+        with:
+          egress-policy: audit
+
       - name: 'Checking Out Code'
-        uses: actions/checkout@v4
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3.8.2
 
       - name: Get yarn cache directory path
         working-directory: frontend
         id: yarn-cache-dir-path
         run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-      - uses: actions/cache@v3
+      - uses: actions/cache@704facf57e6136b1bc63b828d79edcd491f0ee84 # v3.3.2
         id: yarn-cache
         with:
           path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
@@ -51,7 +62,7 @@ jobs:
         shell: bash
 
       - name: Cypress run
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@248bde77443c376edc45906ede03a1aba9da0462 # v5.8.4
         with:
           install: false
           working-directory: frontend/testing/cypress
@@ -64,7 +75,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Store artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32 # v3.1.3
         if: failure()
         with:
           name: cypress-screenshots
